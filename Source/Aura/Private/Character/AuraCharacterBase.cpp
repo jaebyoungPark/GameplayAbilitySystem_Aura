@@ -2,7 +2,7 @@
 
 
 #include "Character/AuraCharacterBase.h"
-
+#include "DebugHelper.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -19,6 +19,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 void AAuraCharacterBase::BeginPlay()
 {
+	
+
+	AB_LOG(LogTemp, Warning, TEXT(""));
+
 	Super::BeginPlay();
 	
 }
