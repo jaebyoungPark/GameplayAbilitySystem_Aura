@@ -100,10 +100,10 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 void AAuraPlayerController::CursorTrace()
 {
-	AB_LOG(LogTemp, Warning, TEXT("[ThisActor] : %s, [LastActor] : %s"),
-		*GetNameSafe(ThisActor.GetObject()),
-		*GetNameSafe(LastActor.GetObject())
-	);
+	//AB_LOG(LogTemp, Warning, TEXT("[ThisActor] : %s, [LastActor] : %s"),
+	//	*GetNameSafe(ThisActor.GetObject()),
+	//	*GetNameSafe(LastActor.GetObject())
+	//);
 
 	FHitResult CursorHit;
 
@@ -113,7 +113,7 @@ void AAuraPlayerController::CursorTrace()
 	{
 	
 
-		AB_LOG(LogTemp, Warning, TEXT("BlockingHit is Invalid %d"), Test);
+		//AB_LOG(LogTemp, Warning, TEXT("BlockingHit is Invalid %d"), Test);
 
 		Test++;
 
