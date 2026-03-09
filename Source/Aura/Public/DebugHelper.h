@@ -28,10 +28,28 @@ namespace Debug
 		}
 	}
 }
+//기존
+//#define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
+//#define AA_LOG(LogCat, Verbosity, Format, ...) \
+//UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
+//LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
+
+
 
 #define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
-//#define AB_LOG(LogCat, Verbosity, Format, ...) UE_LOG(LogCat, Verbosity, TEXT("%s,   %s"), LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
-
 #define AB_LOG(LogCat, Verbosity, Format, ...) \
-UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
-LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
+    if (GWorld && GWorld->IsGameWorld()) \
+    { \
+        UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
+        LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__)) \
+    }
+
+
+// 새로운 매크로 이름
+#define AA_LOG(LogCat, Verbosity, Format, ...) \
+    do { \
+        if (GWorld && GWorld->IsGameWorld()) \
+        { \
+            UE_LOG(LogCat, Verbosity, Format, ##__VA_ARGS__); \
+        } \
+    } while(0)

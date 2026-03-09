@@ -21,7 +21,7 @@ void AAuraCharacterBase::BeginPlay()
 {
 	
 
-	AB_LOG(LogTemp, Warning, TEXT(""));
+	AA_LOG(LogTemp, Warning, TEXT(""));
 
 	Super::BeginPlay();
 	

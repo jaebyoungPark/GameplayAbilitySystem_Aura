@@ -9,14 +9,20 @@
 
 #include "DebugHelper.h"
 
+//Test
+#include "Aura/Camera/MyPlayerCameraManager.h"
+
 AAuraPlayerController::AAuraPlayerController()
 {	
 	bReplicates = true;
+
+	//테스트용
+	PlayerCameraManagerClass = AMyPlayerCameraManager::StaticClass();
 }
 
 void AAuraPlayerController::BeginPlay()
 {
-	AB_LOG(LogTemp, Warning, TEXT(""));
+
 
 	Super::BeginPlay();
 	check(AuraContext);
@@ -39,7 +45,7 @@ void AAuraPlayerController::BeginPlay()
 
 void AAuraPlayerController::SetupInputComponent()
 {
-	AB_LOG(LogTemp, Warning, TEXT(""));
+
 
 	Super::SetupInputComponent();
 
@@ -55,18 +61,26 @@ void AAuraPlayerController::SetupInputComponent()
 
 }
 
+void AAuraPlayerController::UpdateRotation(float DeltaTime)
+{
+	Super::UpdateRotation(DeltaTime);
+
+
+}
+
 void AAuraPlayerController::Move(const FInputActionValue& Value)
 {
-
-
+	
 	const FVector2D InputAxisVector = Value.Get<FVector2D>();
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	
+	/*UE_LOG(LogTemp, Warning, TEXT("[YawRotation] : %s, [Rotation] : %s, [InputAxisVector]: %s, [ForwardDirection] : %s, [RightDirection] : %s"), *YawRotation.ToString(), *Rotation.ToString(), *InputAxisVector.ToString(), *ForwardDirection.ToString(), *RightDirection.ToString());*/
 
-	if (APawn* ControlledPawn = GetPawn < APawn > ())
+	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);

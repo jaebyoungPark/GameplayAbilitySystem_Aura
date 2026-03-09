@@ -13,5 +13,15 @@ UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase
 {
 	GENERATED_BODY()
+
+public:
+	AAuraCharacter();
+
+	//Test
+	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
+	virtual void Tick(float DeltaTime) override;
+
+	//TestEnd
+
 	
 };
