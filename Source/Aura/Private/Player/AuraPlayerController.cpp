@@ -3,9 +3,9 @@
 
 #include "Player/AuraPlayerController.h"
 #include "Engine/LocalPlayer.h"
-
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 #include "DebugHelper.h"
 
@@ -61,6 +61,14 @@ void AAuraPlayerController::SetupInputComponent()
 
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+
+}
+
 void AAuraPlayerController::UpdateRotation(float DeltaTime)
 {
 	Super::UpdateRotation(DeltaTime);
@@ -87,5 +95,85 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 	}
 
+
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	AB_LOG(LogTemp, Warning, TEXT("[ThisActor] : %s, [LastActor] : %s"),
+		*GetNameSafe(ThisActor.GetObject()),
+		*GetNameSafe(LastActor.GetObject())
+	);
+
+	FHitResult CursorHit;
+
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+
+	if ( !CursorHit.bBlockingHit )
+	{
+	
+
+		AB_LOG(LogTemp, Warning, TEXT("BlockingHit is Invalid %d"), Test);
+
+		Test++;
+
+		return;
+	}
+
+	LastActor = ThisActor;
+	ThisActor = CursorHit.GetActor();
+	
+	/**
+	* Line trace from cursor. There are several scenarios:
+	*  A. LastActor is null && ThisActor is null
+	*		 - Do nothing
+	*  B. Last Actor is null && ThisActor is valid
+	*		 - Highlight ThisActor
+	*  C. Last Actor is valid && ThisActor is null
+	*		- UnHighlight LastActor
+	*	D. Both Actor are valid, but LastActor != ThisActor
+	*		- UnHighlight LastActor, and Highlight ThisActor
+	*	E. Both Actors are valid, and are the same Actor
+	*		- Do nothing
+	*/
+
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B
+			ThisActor->HighlightActor();
+		}
+		else
+		{
+			// Case A - Both are null, do nothing 
+		}
+	}
+	else // LastActor is valid 
+	{
+		if (ThisActor == nullptr)
+		{
+			// Case C 
+			LastActor->UnHighlightActor();
+		}
+		else // both actors are valid
+		{
+			if (LastActor != ThisActor)
+			{
+				// Case D
+				LastActor->UnHighlightActor();
+				ThisActor->HighlightActor();
+			}
+			else
+			{
+				// Cas E - do nothing
+			}
+
+
+			
+		}
+
+	}
 
 }
