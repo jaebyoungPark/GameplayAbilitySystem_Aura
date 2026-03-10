@@ -42,10 +42,18 @@ void AAuraEnemy::UnHighlightActor()
 void AAuraEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	
 
 	AB_LOG(LogTemp, Warning, TEXT("[CustomDepthStencilValue] : %i, [this name] : %s, %d"), GetMesh()->CustomDepthStencilValue, *this->GetName(), TestVar);
 
 	TestVar++;
+}
+
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	check(AbilitySystemComponent);
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
