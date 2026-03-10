@@ -1,0 +1,276 @@
+좋아요, 이제 Attribute Set에 속성을 추가할 준비가 되었습니다.
+
+먼저 모든 탭을 닫고 싶습니다.
+우클릭해서 Close All Tabs를 선택하고, Attribute Set을 불러옵니다.
+
+헤더 파일을 열겠습니다.
+Ability System 폴더 안에 있는 AuraAttributeSet을 열었습니다.
+지금은 거의 비어있고, 저는 public 섹션과 생성자를 추가하고 싶습니다.
+
+그래서 public 섹션을 추가하고, 생성자를 선언한 뒤, 정의를 생성합니다.
+그러면 CPP 파일이 열립니다.
+좋아요, 이제 Attribute Set으로 돌아갑니다.
+
+여기 public 섹션에 속성을 선언하겠습니다.
+첫 번째 속성은 거의 모든 RPG 캐릭터에게 필수적인 Health입니다.
+Health를 “Health”라고 부를지 “Life”라고 부를지는 상관없습니다.
+중요한 것은 프로젝트 내에서 일관된 이름 규칙을 정하고 지키는 것입니다.
+Health는 거의 보편적이므로, 여기서는 Health로 사용하겠습니다.
+
+속성 타입은 GameplayAttributeData이므로, 이 타입으로 변수를 만들고 이름을 Health라고 합니다.
+이제 첫 번째 단계로 변수를 만들었습니다.
+
+하지만 Attribute를 만들 때 몇 가지 추가 작업이 필요합니다.
+이 단계들은 GAS 프로젝트에서 모든 속성을 만들 때 반복적으로 수행하게 될 것입니다.
+
+우선 New Property로 만들겠습니다.
+그리고 이 변수는 Replicated(복제) 되어야 합니다.
+대부분의 속성은 복제될 것이며, 몇 가지 예외만 있습니다.
+Health는 서버에서 값이 바뀌면 모든 클라이언트가 그 변경을 받아야 하므로, 복제가 필요합니다.
+
+Gameplay Effects를 통해 값이 바뀌면, 이것은 예측(predicted) 되기 때문에, 클라이언트에서 먼저 로컬로 바뀌고 서버에 통보됩니다.
+서버가 값을 바꾸면, 다른 모든 클라이언트가 그 변화를 알아야 합니다.
+그래서 Health는 반드시 복제되어야 합니다.
+
+복제 가능한 변수로 만들려면 Replicated 스펙ifier를 사용합니다.
+하지만 Attribute의 경우 Rep Notify가 필요합니다.
+
+Rep Notify는 변수가 복제될 때 자동으로 호출됩니다.
+즉 서버가 클라이언트로 변수를 복제하면, 클라이언트에서 Rep Notify가 트리거됩니다.
+
+Health에 Rep Notify를 적용하려면, 일반적인 Unreal Engine 관례에 따라 OnRep_Health라는 함수를 만듭니다.
+아직 이 함수는 존재하지 않지만, 이렇게 지정하면 Health가 Replicated될 때 호출됩니다.
+
+함수를 만들 때는 다음과 같이 선언합니다.
+
+UFUNCTION()
+void OnRep_Health(const FGameplayAttributeData& OldHealth);
+
+Rep Notify 함수는 인자를 가질 수도 있고 없을 수도 있습니다.
+
+인자를 받을 경우, 타입은 반드시 복제되는 변수 타입과 같아야 합니다.
+
+여기서는 const reference로 전달하고, 이름은 OldHealth로 합니다.
+
+이렇게 하면 Health가 복제될 때 새로운 값과 함께 이전 값을 알 수 있습니다.
+이전 값이 필요할 경우 비교할 때 유용합니다.
+
+마지막으로, Attribute Set에서 Rep Notify를 설정할 때, Ability System에 변경을 알려야 합니다.
+이 작업은 Ability System이 내부적으로 속성 관리와 동기화를 제대로 수행할 수 있게 합니다.
+
+이를 위해 GAMEPLAYATTRIBUTE_REPNOTIFY 매크로를 사용합니다.
+사용 방법:
+
+GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Health, OldHealth);
+
+첫 번째 인자: 클래스 이름 (여기서는 UAuraAttributeSet)
+
+두 번째 인자: Replicated Attribute 이름 (여기서는 Health)
+
+세 번째 인자: 이전 값 (OldHealth)
+
+이렇게 하면 Health 속성의 복제와 변경 알림이 제대로 작동하게 됩니다.
+
+이제 이전 Health 값도 전달합니다.
+이렇게 하면 Gameplay Ability System은 Health가 방금 복제되었음을 알 수 있습니다.
+
+다음으로, 빨간 밑줄(에러)을 없애기 위해 AbilitySystemComponent를 포함해야 합니다.
+그래서 헤더 파일에 다음을 추가합니다.
+
+#include "AbilitySystemComponent.h"
+
+Writer(IDE)가 “이 함수를 const로 만들 수 있다”라고 알려주기도 합니다.
+원한다면 함수 선언과 정의 양쪽 모두에 const를 추가하면 됩니다.
+
+void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
+
+이렇게 하면 Ability System이 다음을 알게 됩니다.
+
+값이 서버에서 내려와 변경되었다는 사실
+
+이전 값을 기록하여 필요 시 롤백할 수 있음
+
+예를 들어 예측(Prediction)이 있을 경우, 서버는 변경 사항이 유효하지 않다고 판단하면 롤백할 수 있습니다.
+
+거의 다 끝났습니다.
+
+멀티플레이어 코스를 들어본 사람이라면, 변수를 복제할 때 또 다른 단계가 있다는 것을 아실 겁니다.
+변수를 복제하려면 클래스에 특정 함수가 있어야 합니다.
+
+이 함수는 생성자 바로 아래 public 섹션에 위치합니다.
+
+함수는 virtual이고 void 타입입니다.
+
+이름은 GetLifetimeReplicatedProps입니다.
+
+함수 시그니처:
+
+virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+TArray<FLifetimeProperty>& OutLifetimeProps : 복제할 변수를 등록하는 배열
+
+const override : 상수 함수이며 오버라이드
+
+이제 이 함수 정의에서 변수를 복제용으로 등록합니다.
+이를 위해 DOREPLIFETIME 매크로를 사용합니다.
+
+DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);
+
+UAuraAttributeSet : 클래스 이름
+
+Health : 복제할 변수
+
+COND_None : 조건 없이 항상 복제
+
+REPNOTIFY_Always : 항상 Rep Notify 호출
+
+설명하자면, 이 한 줄이 하는 일은:
+
+Health 변수가 서버에서 변경되면 모든 클라이언트로 복제
+
+복제될 때 OnRep_Health가 항상 호출
+
+별도의 조건 없이 항상 복제
+
+즉, 이 설정으로 Health 속성이 완전히 복제되고, 서버/클라이언트 동기화와 Rep Notify가 올바르게 동작하게 됩니다.
+
+지금 하고 있는 것은 Health 변수를 복제 대상으로 등록하는 과정입니다.
+복제하려는 모든 변수에는 이 과정이 필요합니다.
+
+여기서는 아무 조건 없이 항상 복제하도록 설정했습니다.
+
+물론 다른 조건을 설정할 수도 있습니다.
+
+예를 들어, Owner에게만 복제하고 싶다면 그런 옵션도 있습니다.
+
+하지만 우리는 조건 없이 항상 복제할 것이므로 COND_None을 사용합니다.
+
+REPNOTIFY_Always는 서버에서 값이 설정되면 클라이언트로 복제되고, 클라이언트에서 값이 업데이트되어 항상 설정됨을 의미합니다.
+
+이를 OnChanged 옵션과 비교해보면 좋습니다.
+
+OnChanged는 기본 옵션입니다.
+
+서버에서 Health 값을 설정했는데 값이 이전과 같다면, 복제는 발생하지 않습니다.
+
+이는 최적화 목적입니다. 이미 같은 값이라면 굳이 복제할 필요가 없으니까요.
+
+하지만 GAS(Gameplay Ability System)에서는 항상 복제하도록 설정하는 것이 좋습니다.
+
+값이 새 값이든, 이전 값과 같든, 설정 행위 자체에 반응할 수 있어야 하기 때문입니다.
+
+그래서 Always를 사용합니다.
+
+이제 속성을 만들고 Rep Notify와 함께 복제하도록 설정하는 마지막 단계가 끝났습니다.
+하지만 여기서 추가적인 Property Specifier를 더할 수도 있습니다.
+
+예를 들어, Blueprint에서 접근할 수 있도록 하고 싶다면 BlueprintReadOnly를 추가할 수 있습니다.
+
+또한 Category를 지정하는 것도 좋습니다.
+
+여기서는 캐릭터의 생명과 관련된 속성이므로, Category를 Vital 또는 Health로 지정할 수 있습니다.
+
+즉, Health와 관련된 속성은 Vital Attributes로 묶어 관리할 수 있습니다.
+
+좋아요, 이제 Health 속성을 만들었으니, 같은 과정을 한 번 더 반복해서 Max Health를 만들겠습니다.
+
+일반적으로 Health를 만들면 Max Health도 함께 만듭니다.
+
+FGameplayAttributeData 타입으로 MaxHealth 변수를 만들고, 거의 동일한 Property Specifier를 적용합니다.
+
+단, Rep Notify 함수 이름은 달라야 합니다.
+
+OnRep_MaxHealth라는 void 함수를 만들고,
+
+인자는 const FGameplayAttributeData& 타입으로 전달합니다.
+
+즉, Health와 MaxHealth 모두 복제 가능하고 Rep Notify가 연결된 속성으로 만들어서, 서버/클라이언트 간 동기화와 Blueprint 접근성을 확보하는 과정입니다.
+
+이제 OldMaxHealth라는 이름으로 전달됩니다. const로 전달하면 되겠죠.
+정의도 생성해 주고, Gameplay Attribute Rep Notify 매크로도 Health에서 복사해서 MaxHealth용으로 붙여 넣습니다.
+
+변수 이름은 MaxHealth
+
+이전 값은 OldMaxHealth로 전달
+
+조금 반복되는 과정이 보이죠.
+
+그리고 Rep Notify 함수는 UFUNCTION이어야 하는 것도 잊으면 안 됩니다.
+
+마지막으로 MaxHealth를 GetLifetimeReplicatedProps에 등록합니다.
+
+Health에서 했던 DOREPLIFETIME_CONDITION_NOTIFY 라인을 복사해서
+
+Health 대신 MaxHealth로 바꿔주면 됩니다.
+이제 MaxHealth도 복제 등록이 완료되었습니다.
+
+즉, 새로운 속성을 추가하는 과정은 다음 단계들을 포함합니다.
+
+변수 선언
+
+변수 복제 설정
+
+Rep Notify 함수 생성 (이전 값 전달 가능)
+
+Rep Notify 정의
+
+Gameplay Attribute Rep Notify 매크로 적용
+
+GetLifetimeReplicatedProps에 DOREPLIFETIME_CONDITION_NOTIFY로 등록 (조건: NONE, 항상 Rep Notify 호출)
+
+이 과정들을 Boilerplate라고 부릅니다.
+
+Boilerplate란, 어떤 기능을 정상적으로 동작시키기 위해 반드시 필요한 반복적 단계들을 말합니다.
+
+Attribute Set에서 속성을 만들 때는 거의 항상 이 과정을 반복하게 됩니다.
+
+GAS 프로젝트에서는 모든 Attribute에 대해 이 Boilerplate를 수행해야 합니다.
+
+이제 Health와 MaxHealth를 두 번 해봤으니, 여러분도 혼자서 할 수 있을 만큼 자신감이 붙었을 겁니다.
+그래서 이번에는 퀘스트를 드리겠습니다.
+
+새로운 Attribute 두 개 만들기: Mana와 MaxMana
+
+Health와 MaxHealth에서 했던 Boilerplate 과정을 똑같이 수행하기
+
+영상 일시정지하고 Mana와 MaxMana를 추가하면 됩니다.
+
+Mana와 MaxMana를 만들 준비가 되었으면, 기존 Health/MaxHealth 코드를 복사해서 이름과 UPROPERTY를 변경하면 됩니다.
+
+MaxHealth를 복사할 때, Rep Notify 함수 이름도 OnRep_MaxHealth로 변경해야 함을 주의
+
+Mana: OnRep_Mana
+
+MaxMana: OnRep_MaxMana
+
+이들은 모두 Vital Attributes 범주에 포함
+
+함수 정의도 복제:
+
+OnRep_Mana → 이전 값: OldMana
+
+OnRep_MaxMana → 이전 값: OldMaxMana
+
+Gameplay Attribute Rep Notify 매크로도 각각 추가:
+
+Mana: GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Mana, OldMana)
+
+MaxMana: GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, MaxMana, OldMaxMana)
+
+마지막 단계: GetLifetimeReplicatedProps에 Mana와 MaxMana 등록
+
+DOREPLIFETIME_CONDITION_NOTIFY 복사 → 이름만 변경
+
+이 과정을 잊으면 멀티플레이어에서 Mana/MaxMana가 복제되지 않음
+
+복사/붙여넣기 시 실수가 발생할 수 있으니 주의
+
+Boilerplate 과정은 반복적이지만 반드시 필요한 단계
+
+새 Attribute를 만들 때는 이 단계를 꼭 지켜야 함
+
+결과적으로, 지금 Attribute Set에는 Health, MaxHealth, Mana, MaxMana 총 4개의 속성이 있게 되었고,
+모두 복제와 Rep Notify가 제대로 연결되어 있습니다.
+
+좋아요, 잘하셨습니다!
+다음 영상에서 이어서 진행할 수 있습니다.
