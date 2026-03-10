@@ -29,7 +29,7 @@ void AAuraCharacter::Tick(float DeltaTime)
 	//강의에선 tick 없음
 	Super::Tick(DeltaTime);
 
-	// Tick에서 DrawDebugArrow 사용
+	// Tick에서 Draw DebugArrow 사용
 	DrawDebugDirectionalArrow(
 		GetWorld(),
 		GetActorLocation(),
