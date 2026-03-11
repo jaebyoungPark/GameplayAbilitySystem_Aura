@@ -1,0 +1,1047 @@
+Welcome.
+
+환영합니다.
+
+이번 영상에서는 우리의 Attribute(속성)를 변경할 수 있는 Actor를 만들어 보겠습니다.
+
+게임을 만들다 보면 월드 안에 주울 수 있는 어떤 오브젝트가 필요할 때가 많습니다.
+그리고 그런 오브젝트는 보통 우리의 Attribute에 어떤 식으로든 영향을 주게 됩니다.
+
+예를 들면
+
+체력을 회복하는 포션
+
+마나를 증가시키는 아이템
+
+공격력을 올려주는 버프 아이템
+
+같은 것들이죠.
+
+그래서 저는 Attribute를 변경할 수 있는 능력을 기본적으로 가지고 있는, 범용적으로 사용할 수 있는 Actor를 하나 만들어 두고 싶습니다.
+
+우리는 이미 Attribute를 변경하는 가장 권장되는 방법이 Gameplay Effect를 사용하는 것이라는 것을 알고 있습니다.
+
+하지만 아직 Gameplay Effect를 만들고 사용하는 방법은 배우지 않았습니다.
+
+그래서 지금은 Attribute를 직접 변경하는 Actor를 하나 만들겠습니다.
+
+그리고 이런 방식의 한계점도 확인해 보고, 코드에 TODO 주석을 추가해서
+
+나중에 시스템을 Gameplay Effect 기반으로 변경할 예정
+
+이라는 계획을 남겨둘 것입니다.
+
+그럼 이제 새로운 Actor 클래스를 만들어 보겠습니다.
+
+먼저 에디터를 실행하겠습니다.
+
+그리고 새로운 C++ 클래스를 만들겠습니다.
+
+C++ Classes → Aura → Public 폴더로 들어가서
+우클릭 후 New C++ Class를 선택합니다.
+
+이 클래스는 단순한 Actor 클래스로 만들겠습니다.
+
+Next를 누르고
+이 클래스를 Actor라는 폴더 안에 넣겠습니다.
+
+이 클래스는 어떤 종류의 Effect를 적용하는 범용 클래스가 될 것입니다.
+
+그래서 이름을 AuraEffectActor라고 짓고 클래스를 생성하겠습니다.
+
+이제 에디터를 닫고
+Rider에서 새로 만든 Actor를 열겠습니다.
+
+여기 AuraEffectActor.cpp 파일이 있습니다.
+
+그리고 헤더 파일(.h)도 함께 열겠습니다.
+
+이렇게 두 파일을 왼쪽에 나란히 배치하겠습니다.
+
+AuraEffectActor는 아주 단순한 구조가 될 것입니다.
+
+나중에는 이것을 훨씬 더 범용적으로 확장할 예정이지만,
+
+지금은 단순히
+
+다른 Actor와 Overlap 했을 때
+
+어떤 Attribute 변경을 적용하는 기능
+
+만 만들겠습니다.
+
+그래서 우선 Tick 함수는 제거하겠습니다.
+
+기본으로 생성되는 주석도 제거하고,
+CPP 파일에서도 Tick 함수와 주석을 모두 삭제하겠습니다.
+
+Tick이 필요 없기 때문에
+
+PrimaryActorTick.bCanEverTick = false;
+
+로 설정하겠습니다.
+
+즉, 현재 단계에서는 Tick 동작이 없습니다.
+
+이제 AuraEffectActor에는 Overlap을 감지할 Volume이 필요합니다.
+
+여기서는 Sphere Collision을 사용하겠습니다.
+
+그리고 이것은 private 변수로 만들겠습니다.
+
+그래서 private 섹션을 만들고
+
+TObjectPtr<USphereComponent>
+
+타입의 변수를 추가하겠습니다.
+
+그리고 forward declaration도 추가하겠습니다.
+
+Rider의 자동완성을 사용하면 편합니다.
+
+변수 이름은 Sphere로 하고
+
+UPROPERTY(VisibleAnywhere)
+
+를 붙이겠습니다.
+
+지금 단계에서는 이것이면 충분합니다.
+
+이제 생성자에서 Sphere를 생성하겠습니다.
+
+생성자에서 다음과 같이 작성합니다.
+
+Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+
+Rider가 자동으로 include도 추가해 줍니다.
+
+Sphere는
+
+Root Component로 만들 수도 있고
+
+Root에 붙일 수도 있습니다.
+
+둘 다 괜찮습니다.
+
+하지만 여기서는
+
+Static Mesh를 Root로 만들고
+Sphere를 거기에 붙이겠습니다.
+
+그래서 헤더 파일로 돌아가서
+StaticMeshComponent를 추가하겠습니다.
+
+TObjectPtr<UStaticMeshComponent> Mesh;
+
+이름은 Mesh로 하고
+
+UPROPERTY(VisibleAnywhere)
+
+를 붙입니다.
+
+이제 생성자에서 Mesh를 생성하겠습니다.
+
+Mesh를 Root로 만들 것이기 때문에
+Sphere보다 먼저 생성합니다.
+
+Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+
+그리고 Mesh를 Root Component로 설정합니다.
+
+SetRootComponent(Mesh);
+
+그리고 Sphere를 Root에 붙입니다.
+
+Sphere->SetupAttachment(GetRootComponent());
+
+이렇게 하면 Mesh가 움직일 때 Sphere도 함께 움직입니다.
+
+이제 필요한 것은
+
+Sphere가 다른 Actor와 Overlap 했을 때 호출될 함수
+
+Overlap이 끝났을 때 호출될 함수
+
+입니다.
+
+이 부분은 여러분이 이미 익숙할 내용일 것입니다.
+
+Overlap 함수들은 public으로 만들겠습니다.
+
+그리고 virtual 함수로 선언합니다.
+
+반환 타입은 void입니다.
+
+We call this boilerplate because it has to be done.
+If you want an actor that can overlap something.
+
+이런 코드를 boilerplate 코드라고 부릅니다.
+왜냐하면 반드시 작성해야 하는 기본 코드이기 때문입니다.
+
+즉, 다른 것과 Overlap 할 수 있는 Actor를 만들고 싶다면 항상 필요한 코드입니다.
+
+Now for actually defining what to do when we overlap, that's what we really want to figure out here is what do we do when we overlap with something?
+
+이제 중요한 것은 Overlap이 발생했을 때 실제로 무엇을 할 것인가입니다.
+
+즉,
+
+다른 Actor와 Overlap 되었을 때 우리는 무엇을 해야 하는가?
+
+이것을 결정하는 것이 이번 단계의 목표입니다.
+
+Now we'd like to change the value of one of the attributes in the attribute set for Aura.
+
+우리는 Aura의 Attribute Set에 있는 Attribute 값 중 하나를 변경하고 싶습니다.
+
+But we know that to do that, we should be really applying gameplay effects and that's why we call this effect actor.
+
+하지만 우리는 이미 Attribute를 변경하는 올바른 방법이 Gameplay Effect를 적용하는 것이라는 것을 알고 있습니다.
+
+그래서 이 Actor의 이름을 Effect Actor라고 부르는 것입니다.
+
+But until we learn how to do that, we're just going to change a value such as the health attribute on Aura,
+
+하지만 아직 Gameplay Effect를 사용하는 방법을 배우지 않았기 때문에,
+
+지금은 단순히 Aura의 Health 같은 Attribute 값을 직접 변경할 것입니다.
+
+and that will give us the opportunity to learn how we can access auras attribute set and her attributes.
+
+이 과정을 통해 우리는
+
+Aura의 AttributeSet에 접근하는 방법
+
+그리고 Attribute 값에 접근하는 방법
+
+을 배우게 됩니다.
+
+But we'll also learn how this is a very limited approach that restricts us in a lot of ways.
+
+하지만 동시에 이 방식이 많은 제한이 있는 방법이라는 것도 배우게 될 것입니다.
+
+We don't have a lot of freedom and flexibility.
+
+즉, 자유도와 유연성이 매우 낮습니다.
+
+그래서 나중에는 Gameplay Effect 방식으로 바꾸게 됩니다.
+
+So first let's learn how we can access the other actors ability system component on overlap
+
+먼저 Overlap이 발생했을 때 다른 Actor의 Ability System Component에 접근하는 방법을 배워보겠습니다.
+
+since we have access to the other actor, the actor that overlapped with this particular sphere component,
+
+우리는 이미 Overlap을 발생시킨 OtherActor에 접근할 수 있습니다.
+
+즉, SphereComponent와 충돌한 Actor입니다.
+
+We can see if that other actor has an ability system component.
+
+그래서 우리는
+
+그 Actor가 Ability System Component를 가지고 있는지
+
+확인할 수 있습니다.
+
+Remember in the owner actors where we constructed our ability system component,
+
+기억해 보세요.
+
+Ability System Component를 생성했던 Owner Actor에서
+
+we made sure to implement a specific interface related to the ability system.
+
+우리는 Ability System과 관련된 특정 인터페이스를 구현했었습니다.
+
+If we go to say, the player folder in the public folder here or a player state,
+
+예를 들어 Public → Player 폴더 → AuraPlayerState를 보면
+
+we see that we made sure the Aura player state is derived from AI ability system interface
+
+AuraPlayerState가
+
+IAbilitySystemInterface
+
+를 상속받고 있는 것을 볼 수 있습니다.
+
+and that interface has a pure virtual function get ability system component.
+
+이 인터페이스에는
+
+GetAbilitySystemComponent()
+
+라는 pure virtual 함수가 있습니다.
+
+Now this is very nice because we can take any actor and see if it implements this interface.
+
+이 방식의 장점은 다음과 같습니다.
+
+우리는 어떤 Actor라도
+
+이 인터페이스를 구현했는지 확인할 수 있습니다.
+
+And if it does, we can get the ability system component that belongs to that actor.
+
+만약 구현했다면
+
+그 Actor의 AbilitySystemComponent를 가져올 수 있습니다.
+
+So we really don't have to care what type that actor is,
+
+그래서 우리는 그 Actor의 타입이 무엇인지 신경 쓸 필요가 없습니다.
+
+예를 들어
+
+Character
+
+Pawn
+
+Actor
+
+어떤 것이든 상관없습니다.
+
+If it implements the interface, we can call get ability system component on it.
+
+인터페이스만 구현되어 있다면
+
+GetAbilitySystemComponent()
+
+를 호출할 수 있습니다.
+
+So here in on Overlap, what I'd like to do is take the other actor and cast it to an AI ability system interface.
+
+그래서 OnOverlap 함수에서
+
+OtherActor를
+
+IAbilitySystemInterface
+
+로 캐스팅할 것입니다.
+
+So I'm going to make a local AI ability system interface pointer called ASC interface for lack of a better name.
+
+그래서 로컬 변수로
+
+IAbilitySystemInterface* ASCInterface
+
+라는 포인터를 만들겠습니다.
+
+And I'm going to cast to I ability system interface.
+
+그리고 이것을
+
+IAbilitySystemInterface
+
+타입으로 캐스팅합니다.
+
+The other actor itself.
+
+캐스팅 대상은 OtherActor입니다.
+
+And I can wrap this in an if statement.
+
+그리고 이것을 if 문으로 감싸겠습니다.
+
+I can say if this doesn't return a null pointer,
+
+즉,
+
+캐스팅 결과가 null이 아니라면
+
+then ASC interface will exist within the scope of this if statement.
+
+그때 ASCInterface는 if문 내부에서 유효한 포인터가 됩니다.
+
+And what I can do here since I have the interface is I can find the attribute set.
+
+이제 인터페이스를 얻었기 때문에
+
+AttributeSet을 찾을 수 있습니다.
+
+Now I know that aura attribute set has a health attribute,
+
+우리는 AuraAttributeSet에 Health Attribute가 있다는 것을 알고 있습니다.
+
+so I can find an attribute set on this ability system component of that type if it has one.
+
+그래서 AbilitySystemComponent 안에서
+
+UAuraAttributeSet
+
+타입의 AttributeSet을 찾을 수 있습니다.
+
+Now this is a very limited approach.
+
+하지만 다시 말하지만 이 방법은 매우 제한적인 방식입니다.
+
+Again, once we use gameplay effects, we won't have to care what the type of the attribute set is.
+
+Gameplay Effect를 사용하게 되면
+
+AttributeSet의 타입이 무엇인지 신경 쓸 필요가 없습니다.
+
+If we want to change some sort of value of an attribute.
+
+Attribute 값을 변경하려고 할 때 말이죠.
+
+But for now, until we learn better ways to do it,
+
+하지만 지금은 더 좋은 방법을 배우기 전까지
+
+we're going to learn how to get that attribute set from the ability system.
+
+Ability System에서 AttributeSet을 가져오는 방법을 배울 것입니다.
+
+So what we do first is we take the interface which we know implements the pure virtual function get ability system component.
+
+먼저
+
+인터페이스에서 제공하는
+
+GetAbilitySystemComponent()
+
+함수를 사용합니다.
+
+Now we can assume that that ability system component will be a valid pointer.
+
+여기서는 AbilitySystemComponent가 항상 유효한 포인터라고 가정하겠습니다.
+
+So far in our game we haven't implemented this function on any actors that should return a null pointer if we call it.
+
+현재 게임에서는
+
+이 함수가 null을 반환하는 경우가 없도록 구현되어 있습니다.
+
+So I'm not going to bother checking it to see if it's null
+
+그래서 null 체크는 하지 않겠습니다.
+
+and from the ability system component I'm going to call get attribute set.
+
+그리고 AbilitySystemComponent에서
+
+GetAttributeSet()
+
+함수를 호출합니다.
+
+Now get attribute set is a function that requires a subclass of based on you attribute set.
+
+GetAttributeSet() 함수는
+
+UAttributeSet을 상속한 클래스 타입을 요구합니다.
+
+A subclass of is a new class that we can specify so that the ability system component knows which type of attribute set to look for if it has one.
+
+여기서 TSubclassOf는
+
+어떤 AttributeSet 타입을 찾을 것인지
+
+AbilitySystemComponent에게 알려주는 타입입니다.
+
+So we want to search for UAuraAttributeSet.
+
+그래서 우리는
+
+UAuraAttributeSet
+
+을 찾고 싶습니다.
+
+That's the class of the attribute set
+
+이것이 우리가 만든 AttributeSet 클래스입니다.
+
+so we can use UAuraAttributeSet static class which will satisfy this input of type T subclass of.
+
+그래서 다음과 같이 사용할 수 있습니다.
+
+UAuraAttributeSet::StaticClass()
+
+이 값이
+
+TSubclassOf<UAttributeSet>
+
+타입 요구사항을 만족합니다.
+
+So this whole expression here is going to return an object of type UAttributeSet.
+
+그래서 이 전체 표현식은
+
+UAttributeSet
+
+타입의 객체를 반환하게 됩니다.
+
+So because this returns a UAttributeSet we are going to want to cast to UAuraAttributeSet.
+
+GetAttributeSet() 함수는 UAttributeSet 타입을 반환합니다.
+
+하지만 우리가 실제로 원하는 것은 UAuraAttributeSet이기 때문에
+이 값을 UAuraAttributeSet으로 캐스팅해야 합니다.
+
+So I'm going to wrap this all in a cast.
+
+그래서 이 전체 표현식을 Cast로 감싸겠습니다.
+
+We're going to say Cast to UAuraAttributeSet.
+
+즉 다음과 같이 작성합니다.
+
+Cast<UAuraAttributeSet>()
+
+And we'll wrap this up and we can store all of this in a local UAuraAttributeSet pointer called AuraAttributeSet.
+
+그리고 이 결과를 로컬 변수에 저장합니다.
+
+const UAuraAttributeSet* AuraAttributeSet
+
+이 변수 이름은 AuraAttributeSet으로 하겠습니다.
+
+And this has to be const because GetAttributeSet returns a const UAttributeSet.
+
+여기서 중요한 점은
+
+GetAttributeSet()이 const UAttributeSet을 반환하기 때문에
+우리의 포인터도 const여야 합니다.
+
+그래서 다음과 같이 선언합니다.
+
+const UAuraAttributeSet* AuraAttributeSet
+
+And now we have the other actor's AuraAttributeSet if it has one.
+
+이제 우리는
+
+Overlap한 다른 Actor의 AuraAttributeSet
+
+에 접근할 수 있습니다.
+(그 Actor가 가지고 있다면 말이죠)
+
+Now in our game, all of our actors that implement the ability system interface have an AuraAttributeSet.
+
+현재 우리의 게임에서는
+
+AbilitySystemInterface를 구현한 Actor는 모두 AuraAttributeSet을 가지고 있습니다.
+
+So we know that this should be a valid pointer.
+
+그래서 우리는 이 포인터가 유효한 값일 것이라고 가정할 수 있습니다.
+
+In this case, I'm not going to bother checking if that is null.
+
+그래서 여기서는 null 체크를 하지 않겠습니다.
+
+I'm just going to take AuraAttributeSet and we're going to do something.
+
+그냥 AuraAttributeSet을 사용해서 어떤 작업을 수행하겠습니다.
+
+Now notice we have access to health mana, get health, get mana.
+
+여기서 보면
+
+Health
+
+Mana
+
+GetHealth()
+
+GetMana()
+
+같은 것들에 접근할 수 있습니다.
+
+We have these attributes which are public and those attribute accessors thanks to the boilerplate attribute accessors macro.
+
+이 Attribute들은 public으로 선언되어 있으며
+
+또한 ATTRIBUTE_ACCESSORS 매크로 덕분에
+자동으로 생성된 Getter / Setter 함수도 사용할 수 있습니다.
+
+So we can set these values.
+
+그래서 우리는 이 값들을 변경할 수 있습니다.
+
+I'm going to call SetHealth and SetHealth requires a float.
+
+예를 들어
+
+SetHealth()
+
+함수를 호출할 수 있습니다.
+
+이 함수는 float 값을 필요로 합니다.
+
+Well, I can get the AuraAttributeSet and call GetHealth and I can add some value.
+
+그래서 다음과 같이 할 수 있습니다.
+
+1️⃣ 현재 Health 값을 가져오고
+2️⃣ 거기에 어떤 값을 더합니다.
+
+I'm just going to hardcode a value, say 25.5.
+
+여기서는 단순히 하드코딩된 값을 더하겠습니다.
+
+예를 들어
+
++ 25.5
+
+Now we see the red squiggles here because, well, this is a const UAuraAttributeSet.
+
+하지만 여기서 에러 표시(빨간 줄)가 생깁니다.
+
+왜냐하면
+
+const UAuraAttributeSet
+
+이기 때문입니다.
+
+So we can't really change things if it's a const pointer.
+
+즉,
+
+const 포인터를 통해서는 값을 변경할 수 없습니다.
+
+And that's for our protection.
+
+이것은 우리를 보호하기 위한 설계입니다.
+
+This is something that the ability system enforces.
+
+이것은 Ability System이 강제로 지키도록 만든 규칙입니다.
+
+We shouldn't be setting the health directly on the AuraAttributeSet like this.
+
+우리는 이렇게 AttributeSet에서 직접 Health 값을 수정하면 안 됩니다.
+
+The AuraAttributeSet should either set its own attribute values or have those attributes changed in response to gameplay effects.
+
+올바른 방법은 다음 둘 중 하나입니다.
+
+1️⃣ AttributeSet 내부에서 직접 값을 변경하거나
+2️⃣ GameplayEffect에 의해 값이 변경되도록 하는 것
+
+So already we're doing something that we shouldn't be.
+
+즉, 지금 우리는 원래 하면 안 되는 일을 하고 있는 상태입니다.
+
+But since this is for learning purposes only, before we fix this up to have a better design,
+
+하지만 지금은 학습 목적이기 때문에
+
+나중에 더 좋은 설계로 바꾸기 전에
+
+we're going to break the rules a bit just so we can set that health value and see it change.
+
+일단 규칙을 조금 어기고
+
+Health 값을 직접 변경해서 값이 바뀌는 것을 확인해 보겠습니다.
+
+So I'm going to go ahead and give myself a semicolon here that I was missing for this line.
+
+먼저 빠져 있던 세미콜론을 추가하겠습니다.
+
+and AuraAttributeSet since it's const, well, I'm going to cast away the constness of AuraAttributeSet.
+
+그리고 AuraAttributeSet이 const이기 때문에
+
+우리는 const 속성을 제거하는 캐스팅을 하겠습니다.
+
+Now this is kind of a big no-no in programming.
+
+이것은 프로그래밍에서 굉장히 권장되지 않는 행동입니다.
+
+It's not something that you want to be in the habit of doing.
+
+즉,
+
+이런 것을 습관적으로 사용하면 안 됩니다.
+
+but we're going to do this with a big fat TODO to change this to a better system.
+
+하지만 우리는 여기에 큰 TODO 주석을 남겨서
+
+나중에 더 좋은 시스템으로 바꿔야 한다
+
+는 것을 명확히 표시하겠습니다.
+
+So before I break the rules, I'm going to add a TODO comment here.
+
+그래서 규칙을 깨기 전에
+
+TODO 주석을 추가하겠습니다.
+
+that says change this to apply a gameplay effect for now using const_cast as a hack.
+
+내용은 다음과 같습니다.
+
+TODO: Change this to apply a GameplayEffect
+For now using const_cast as a hack
+
+즉
+
+나중에는 GameplayEffect로 변경해야 하며
+지금은 임시로 const_cast를 사용하는 해킹 방식이다
+
+라는 의미입니다.
+
+So what we're going to do is create a UAuraAttributeSet.
+
+이제 UAuraAttributeSet 포인터를 하나 만들겠습니다.
+
+and set it equal to the result of a const_cast.
+
+그리고 여기에 const_cast의 결과를 대입합니다.
+
+where const casting to type UAuraAttributeSet.
+
+즉 다음과 같이 작성합니다.
+
+const_cast<UAuraAttributeSet*>
+
+And because we're using const_cast, we need the asterisk here.
+
+포인터 타입이기 때문에 *가 필요합니다.
+
+and what we're casting is AuraAttributeSet.
+
+그리고 캐스팅 대상은
+
+AuraAttributeSet
+
+입니다.
+
+and we're going to call this MutableAuraAttributeSet.
+
+이 새로운 변수 이름은
+
+MutableAuraAttributeSet
+
+으로 하겠습니다.
+
+and we're going to use MutableAuraAttributeSet to call SetHealth.
+
+그리고 이제
+
+MutableAuraAttributeSet->SetHealth(...)
+
+를 호출할 수 있습니다.
+
+So.
+
+We have a const pointer.
+
+우리는 지금 const 포인터를 가지고 있습니다.
+
+You're not supposed to change const pointers,
+
+원래는 const 포인터를 통해 값을 변경하면 안 됩니다.
+
+but if you want to break that rule, we have the power in C++ to do that.
+
+하지만 C++에서는 이 규칙을 깨는 것도 가능합니다.
+
+This is something you should use extreme caution with.
+
+하지만 이것은 아주 조심해서 사용해야 합니다.
+
+All we're doing is breaking encapsulation here.
+
+지금 우리가 하는 일은 캡슐화를 깨는 것입니다.
+
+and throughout this course we're going to make sure to maintain proper encapsulation and good coding practices.
+
+그리고 이 강의 전체에서는
+
+올바른 캡슐화
+
+좋은 코딩 습관
+
+을 유지하는 방향으로 코드를 작성할 것입니다.
+
+💡 마지막으로 이 부분은 GAS 이해에서 굉장히 중요한 포인트입니다.
+
+지금 코드가 일부러 나쁜 방법을 보여주는 이유는 다음 때문입니다.
+
+직접 변경 방식
+
+Actor
+  ↓
+ASC
+  ↓
+AttributeSet
+  ↓
+SetHealth()
+
+GAS의 정석 방식
+
+Actor
+  ↓
+ASC
+  ↓
+ApplyGameplayEffect
+  ↓
+AttributeSet 변경
+
+즉 GAS에서는 Attribute를 직접 바꾸지 않습니다.
+
+그래서 AttributeSet이 const로 반환되는 것입니다.
+
+하지만 지금은 단순히 값이 바뀌는 것을 확인하고 싶기 때문에,
+이 포인터의 const 속성을 제거(cast away the constness) 해서 값을 수정할 수 있도록 하겠습니다.
+
+그리고 물론 Gameplay Effect에 대해 배우게 되면 (곧 배우게 됩니다)
+이 함수는 직접 값을 변경하는 대신
+
+Gameplay Effect를 적용하는 방식
+
+으로 변경하게 될 것입니다.
+그렇게 하면 여러 가지 장점을 확인할 수 있게 됩니다.
+
+그래서 이제 우리의 OnOverlap 함수는 다음과 같은 동작을 하게 됩니다.
+
+1️⃣ Overlap한 Actor의 AttributeSet을 가져온다
+2️⃣ 그 Actor의 Health 값을 가져온다
+3️⃣ Health 값에 25를 더한다
+4️⃣ 새로운 Health 값을 SetHealth로 설정한다
+
+그리고 EndOverlap 구현은 아직 하지 않겠습니다.
+
+여기서 우리가 할 일은 단순합니다.
+
+이 Actor와 Overlap이 발생하면
+Effect Actor 자체를 제거하겠습니다.
+
+그래서 다음 함수를 호출합니다.
+
+Destroy();
+
+이제 우리는 이것을 실제로 테스트해 보고 싶습니다.
+
+월드에서 이 Actor와 Overlap 했을 때 Health 값이 변경되는지 확인해 보겠습니다.
+
+그래서 이제 여러분에게 퀘스트가 있습니다.
+
+Health Potion을 만들어 보세요.
+
+다음과 같이 진행합니다.
+
+1️⃣ AuraEffectActor 기반 Blueprint를 하나 생성합니다
+
+예를 들어 이름을
+
+BP_HealthPotion
+
+이라고 해도 됩니다.
+
+2️⃣ Static Mesh를 설정합니다.
+
+Assets 폴더에서 Potion Bottle Static Mesh를 찾아서 설정하세요.
+
+3️⃣ Attribute 변화 테스트
+
+월드에 하나 배치한 뒤
+
+플레이어가 그 포션과 Overlap 했을 때
+
+Health 값이 변경되는지 확인하세요.
+
+4️⃣ 콘솔 명령어로 확인
+
+게임 실행 후
+
+showdebug abilitysystem
+
+을 입력하면
+
+Ability System 디버그 정보를 볼 수 있습니다.
+
+Health 값이 실제로 변경되는지 확인해 보세요.
+
+이제 영상을 잠시 멈추고 이 퀘스트를 해결해 보세요.
+
+자 이제 제가 한번 만들어 보겠습니다.
+
+먼저 프로젝트를 실행하겠습니다.
+Debug 모드로 실행하겠습니다.
+
+에디터에서 Blueprints 폴더로 이동합니다.
+
+그리고 새 폴더를 하나 만들겠습니다.
+
+폴더 이름은
+
+Actor
+
+로 하겠습니다.
+
+Actor 관련 Blueprint는 여기에 넣겠습니다.
+
+새로운 Blueprint Class를 만들겠습니다.
+
+그리고 AuraEffectActor를 검색해서 선택합니다.
+
+Blueprint 이름은
+
+BP_HealthPotion
+
+으로 하겠습니다.
+
+Blueprint를 열어서 Mesh를 설정하겠습니다.
+
+검색창에
+
+Potion Bottle
+
+을 검색합니다.
+
+여기 포션 병이 있습니다.
+
+그런데 보니까 크기가 너무 큽니다.
+
+그래서 월드에 하나 드래그해서 크기를 확인해 보겠습니다.
+
+네, 확실히 너무 큽니다.
+
+그래서 Mesh의 Scale을 줄이겠습니다.
+
+Scale 값을 0.2로 곱해 줄이겠습니다.
+
+하지만 이렇게 하면 Sphere Collision도 같이 작아집니다.
+
+그래서 Sphere Radius를 조금 키워 주겠습니다.
+
+이제 Health Potion이 준비되었습니다.
+
+월드에서 테스트해 보겠습니다.
+
+먼저 Save All을 누르고
+
+Play를 실행합니다.
+
+틸드 키 ~ 를 눌러 콘솔을 열고 다음을 입력합니다.
+
+showdebug abilitysystem
+
+이제 Health 값을 확인할 수 있습니다.
+
+플레이어가 포션으로 달려가서 Overlap 하면
+
+포션을 주우면서
+
+Health 값이 125가 됩니다.
+
+즉
+
+기존 Health = 100
++25
+---------
+Health = 125
+
+정상적으로 작동합니다.
+
+완벽합니다.
+
+이제 우리는 다음을 알게 되었습니다.
+
+1️⃣ 어떤 Actor의 AbilitySystemComponent에 접근하는 방법
+
+2️⃣ AbilitySystemComponent에서
+
+GetAttributeSet()
+
+을 사용하여 AttributeSet을 가져오는 방법
+
+이때 우리는
+
+찾고 싶은 AttributeSet 타입의 UClass를 전달합니다.
+
+예를 들어
+
+UAuraAttributeSet::StaticClass()
+
+그리고 GetAttributeSet()은
+
+const 포인터를 반환합니다.
+
+그래서 우리는 const_cast를 사용해서
+그 const 속성을 제거하고 값을 변경했습니다.
+
+하지만 const_cast는 절대 습관적으로 사용하면 안 되는 기능입니다.
+
+이것은
+
+"아직 정확한 해결 방법을 모르지만
+일단 작동하도록 만들고 싶을 때"
+
+사용하는 임시 해결 방법에 가깝습니다.
+
+그래서 코드에서 const_cast를 보게 된다면
+
+"이 부분은 나중에 더 좋은 설계로 바꿔야 한다"
+
+라고 생각해야 합니다.
+
+우리의 경우에도 명확한 TODO 주석을 추가했습니다.
+
+즉
+
+나중에는 const_cast를 제거할 예정입니다.
+
+사실 더 큰 문제는 이것입니다.
+
+현재 AuraEffectActor는 너무 구체적인 동작을 합니다.
+
+지금 Actor는 단순히
+
+Health + 25
+
+만 수행합니다.
+
+하지만 Effect Actor라면 더 범용적이어야 합니다.
+
+예를 들어
+
+어떤 Attribute든 변경 가능해야 하고
+
+다양한 방식으로 효과를 적용할 수 있어야 하며
+
+재사용 가능해야 합니다.
+
+또한
+
+const 규칙을 깨지 않아야 하고
+
+캡슐화를 유지해야 합니다.
+
+이것이 바로 나중에 GameplayEffect를 사용하는 이유입니다.
+
+그래서 지금 코드에 TODO가 있는 것입니다.
+
+현재까지 우리는 다음을 배웠습니다.
+
+✔ Actor의 AbilitySystem 접근
+✔ AttributeSet 가져오기
+✔ Attribute 값 변경
+
+지금은 AbilitySystem 디버그 정보를 통해서만
+Health 값이 변경되는 것을 볼 수 있습니다.
+
+하지만 실제 게임에서는
+
+우리가 원하는 것은 이런 것입니다.
+
+HUD
+
+체력바
+
+UI 아이콘
+
+상태 표시
+
+즉
+
+플레이어가 현재 상태를 UI로 확인할 수 있어야 합니다.
+
+그래서 다음 섹션에서는
+
+Health를 화면에 표시하는 UI 시스템(HUD)을 만들 것입니다.
