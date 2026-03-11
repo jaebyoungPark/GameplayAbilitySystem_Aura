@@ -23,10 +23,7 @@ public:
 	virtual void UnHighlightActor()override;
 	/* End Enemy Interface*/
 	
-	//Test
-	virtual void Tick(float DeltaTime) override;
-	int32 TestVar;
-	//TestEnd
+
 
 protected:
 	virtual void BeginPlay() override;
