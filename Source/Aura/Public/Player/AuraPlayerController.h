@@ -45,7 +45,5 @@ private:
 	TScriptInterface<IEnemyInterface> ThisActor;
 
 
-	int32 Test;
-
 
 };

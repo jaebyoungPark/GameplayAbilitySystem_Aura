@@ -28,9 +28,11 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-
-	Subsystem->AddMappingContext(AuraContext, 0);
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext, 0);
+	}
+	
 	
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
@@ -115,7 +117,7 @@ void AAuraPlayerController::CursorTrace()
 
 		//AB_LOG(LogTemp, Warning, TEXT("BlockingHit is Invalid %d"), Test);
 
-		Test++;
+
 
 		return;
 	}
