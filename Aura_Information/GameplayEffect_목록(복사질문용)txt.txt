@@ -1,0 +1,31 @@
+1. Modifiers
+Index [0] 
+Attribute = mana
+Modifier Op = add
+[Modifier Magnitude]
+Magnitude Calculation Type =scalable float
+Scalable Float Magnitude = 1.0
+
+
+2. Stacking
+Stacking Type = aggregate by source
+Stack Limit Count = 2
+Stack Duration Refresh Policy = refresh on successful application
+Stack Period Reset Policy = refresh on successful application
+Stack Expiration Policy = clear entire stack 
+
+3. Overflow
+Overflow Effects = 0
+Deny Overflow Application =
+
+4. Duration 
+Duration Policy = has duration
+[Duration Magnitude]
+Magnitude Calculation Type = float
+Scalable Float Magnitude =1.0
+
+5. Period
+Period = 0.1
+Execute Periodic Effect on Application = false
+Periodic Inhibition Policy = never reset
+

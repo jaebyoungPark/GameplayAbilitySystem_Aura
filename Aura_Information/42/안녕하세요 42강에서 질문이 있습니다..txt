@@ -1,0 +1,5 @@
+안녕하세요 42강에서 질문이 있습니다. 
+'42. Effect Stacking' 파트의 '11:48' 에서, "And notice that no matter how many stacks I have, I'm always just gaining one mana every 10th of a
+second." 라는 강사님의 말씀이 있는데, 아무래도 Stack Expiration Policy 가 'Remove Single Stack andRepresh Duration' 로 설정되어 있을 때 어떻게 동작하는지 설명하기 위한 말씀인 것 같습니다. 
+그리고 강의에서 ManaCrystal 4개를 연속적으로 먹는데, 강사님의 말씀과는 달리 초당 마나가 10이 차는 것으로 보이지 않고, 초반에 2씩 증가 하다가, 나중에 1씩 증가하며 결과적으로 56이 된 것처럼 보입니다. 
+2스텍 지점에서 2씩 마나가 오르고, duration 이 갱신이 되면서 여전히 2씩 오르다가, 마지막 스톤을 먹은 후로부터 1초가 지난 후 스택이 1로 줄어들면서 'Remove Single Stack andRepresh Duration' 에 의해 duration이 초기화 되고 마나가 1씩 증가하는 것으로 보이는데 맞나요?

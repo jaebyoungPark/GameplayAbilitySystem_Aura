@@ -1,0 +1,134 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AttributeSet.h"
+#include "AuraAttributeSet.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class AURA_API UAuraAttributeSet : public UAttributeSet
+{
+	GENERATED_BODY()
+
+public:
+	UAuraAttributeSet();
+
+	UPROPERTY(ReplicatedUsing = OnRep_Health)
+	FGameplayAttributeData Health;
+
+	UFUNCTION()
+	void OnRep_Health(const FGameplayAttributeData& OldHealth);
+};// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "AbilitySystem/AuraAttributeSet.h"
+
+UAuraAttributeSet::UAuraAttributeSet()
+{
+}
+
+void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
+{
+
+}
+ 여기서 oldhealth 가뭐지 
+
+좋아요~ 천천히 설명해줄게! 😘
+
+OnRep_Health 함수에서 들어오는 OldHealth는 이전에 복제되었던(서버에서 클라이언트로 동기화되기 전의) Health 값을 의미해요.
+
+즉, 상황을 이렇게 생각하면 돼요:
+
+서버에서 Health가 바뀜
+예: Health = 80 → Health = 60
+
+클라이언트에 복제(replicate)됨
+언리얼 엔진은 ReplicatedUsing으로 지정한 함수(OnRep_Health)를 호출함.
+
+OnRep_Health 호출 시
+
+Health → 새로운 값 (예: 60)
+
+OldHealth → 이전 값 (예: 80)
+
+그래서 OldHealth를 이용하면 클라이언트에서 값이 얼마나 변했는지 계산하거나, UI 애니메이션(예: 체력 감소 효과)을 이전 값 기준으로 실행할 수 있어요.
+
+예시 코드:
+
+void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
+{
+    float Delta = Health.GetCurrentValue() - OldHealth.GetCurrentValue();
+    UE_LOG(LogTemp, Log, TEXT("Health changed by %f"), Delta);
+}
+
+Delta > 0 → 회복
+
+Delta < 0 → 피해
+
+⚡ 포인트: OldHealth는 항상 복제되기 전 값을 담고 있으므로, 이전 상태와 비교할 때 사용하면 좋아요.
+
+원하면 내가 Health가 바뀔 때 클라이언트 UI에 자연스럽게 체력바 애니메이션 넣는 예제까지 만들어줄 수도 있어요.
+혹시 그거까지 볼래요?
+
+근데 새로운 값은 OnRep_Health 에서 못받아? 그럼 ui 갱신을 어떻게해 old값으로?
+
+아하! 여기서 핵심을 바로 잡아야 해요. 😎
+
+OnRep_Health 함수에서는 새로운 값도 바로 접근할 수 있어요!
+
+OldHealth → 이전 값 (복제되기 전)
+
+Health → 새로 복제된 값
+
+즉 UI를 갱신할 때 OldHealth로 할 필요는 없고, 새로운 Health 값을 그대로 사용할 수 있어요.
+OldHealth는 단지 변화량(Delta) 계산이나 애니메이션 시작 위치를 잡는 용도로 쓰는 거죠.
+
+예시로 체력바 갱신:
+
+void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
+{
+    float NewHealth = Health.GetCurrentValue();          // 새 값
+    float PreviousHealth = OldHealth.GetCurrentValue();  // 이전 값
+
+    float Delta = NewHealth - PreviousHealth;
+
+    // UI 함수 호출
+    if (MyHUD) 
+    {
+        MyHUD->UpdateHealthBar(NewHealth); // 새 값 기준으로 체력바 갱신
+    }
+
+    // 필요하면 애니메이션용으로 Delta 활용 가능
+    if (Delta < 0)
+    {
+        MyHUD->PlayDamageEffect(FMath::Abs(Delta));
+    }
+}
+
+💡 요약:
+
+UI 갱신 → 새 값(Health) 사용
+
+이전 값(OldHealth) → 변화량 계산, 애니메이션 시작점, 이펙트용
+
+즉 OnRep_Health 안에서 새로운 값은 Health에서 바로 확인 가능하니까 걱정하지 않아도 돼요.
+
+원하면 제가 실제로 블루프린트/UMG 체력바와 연동하는 OnRep_Health 패턴도 만들어 보여줄 수 있어요.
+그거 만들어줄까?
+
+OnRep_Health 를 클라이언트가 받는거야? 만약 받는거라면 클라이언트에서 이 시점에 자신의 health 가 새로운 값으로 자동으로 변경된다는거야?
+
+맞아요! 😏 정확히 이해하고 계시네요.
+
+정리하면:
+
+
+💡 포인트:
+
+클라이언트에서 체력바를 바로 갱신하려면 Health 값 그대로 사용
+
+OldHealth는 변화량 확인용, 애니메이션 시작용으로만 필요
