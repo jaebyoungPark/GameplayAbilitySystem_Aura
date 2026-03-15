@@ -38,40 +38,34 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.f, EffectContextHandle);
 	TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 
-	// Apply 후 Stack 상태 디버그 출력
-	TArray<FActiveGameplayEffectHandle> ActiveHandles =
-		TargetASC->GetActiveEffects(FGameplayEffectQuery());
 
-	for (const FActiveGameplayEffectHandle& Handle : ActiveHandles)
-	{
-		const FActiveGameplayEffect* ActiveGE = TargetASC->GetActiveGameplayEffect(Handle);
-		if (ActiveGE)
-		{
-			float StartTime = ActiveGE->StartWorldTime;
-			float CurrentTime = GetWorld()->GetTimeSeconds();
-			float ElapsedTime = CurrentTime - StartTime;
-
-			UE_LOG(LogTemp, Warning,
-				TEXT("GE: %s | Stack: %d | ElapsedTime: %.7f | Source ASC: %s"),
-				*ActiveGE->Spec.Def->GetName(),
-				ActiveGE->Spec.StackCount,
-				ElapsedTime,
-				*GetNameSafe(ActiveGE->Spec.GetContext().GetInstigatorAbilitySystemComponent()));
-		}
-		else
-		{
-			AB_LOG(LogTemp, Warning, TEXT(""));
-		}
-	}
 
 }
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 {
+	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+
+	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
 }
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 {
+	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+
+	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
 }
 
 
