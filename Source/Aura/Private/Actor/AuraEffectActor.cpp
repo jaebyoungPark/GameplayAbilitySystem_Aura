@@ -29,7 +29,7 @@ void AAuraEffectActor::Tick(float Deltatime)
 {
 	Super::Tick(Deltatime);
 
-	AB_LOG(LogTemp, Warning, TEXT(" [%d] MapSize=%d"), Num, ActiveEffectHandles.Num());
+	//AB_LOG(LogTemp, Warning, TEXT(" [%d] MapSize=%d"), Num, ActiveEffectHandles.Num());
 
 	Num++;
 }
@@ -45,26 +45,29 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
 
+
+	//TStart
+	FGameplayEffectContext* EffectContext = EffectContextHandle.Get();
+
+	AB_LOG(LogTemp, Warning, TEXT("[EffectCauser] : %s, [Instigator] : %s"), *EffectContext->GetEffectCauser()->GetName(), *EffectContext->GetInstigator()->GetName());
+
 	FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.f, EffectContextHandle);
 	FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 
-	FGameplayEffectQuery Query;
-	TArray<FActiveGameplayEffectHandle> Handles = TargetASC->GetActiveEffects(Query);
+	//FGameplayEffectQuery Query;
+	//TArray<FActiveGameplayEffectHandle> Handles = TargetASC->GetActiveEffects(Query);
 
-	int32 Count = Handles.Num();
-	AB_LOG(LogTemp, Warning, TEXT("ASC Active Effects Count = %d"), Count);
+	//int32 Count = Handles.Num();
+	//AB_LOG(LogTemp, Warning, TEXT("ASC Active Effects Count = %d"), Count);
 
-	AB_LOG(LogTemp, Warning, TEXT("Handle = %s"), *ActiveEffectHandle.ToString());
-
+	//AB_LOG(LogTemp, Warning, TEXT("Handle = %s"), *ActiveEffectHandle.ToString());
+	//TEnd
 
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
 	}
-
-
-
 
 }
 
@@ -89,7 +92,7 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 {
-	AB_LOG(LogTemp, Warning, TEXT("[InfiniteEffectRemovalPolicy] : %s"), *UEnum::GetValueAsString(InfiniteEffectRemovalPolicy));
+	//AB_LOG(LogTemp, Warning, TEXT("[InfiniteEffectRemovalPolicy] : %s"), *UEnum::GetValueAsString(InfiniteEffectRemovalPolicy));
 
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
@@ -125,9 +128,9 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 
 		for (FActiveGameplayEffectHandle& Handle : HandlesToRemove)
 		{
-			AB_LOG(LogTemp, Warning, TEXT("Removed Handle Valid=%d  MapSize=%d"),
-				Handle.IsValid(),
-				ActiveEffectHandles.Num());
+			//AB_LOG(LogTemp, Warning, TEXT("Removed Handle Valid=%d  MapSize=%d"),
+			//	Handle.IsValid(),
+			//	ActiveEffectHandles.Num());
 
 			ActiveEffectHandles.FindAndRemoveChecked(Handle);
 
