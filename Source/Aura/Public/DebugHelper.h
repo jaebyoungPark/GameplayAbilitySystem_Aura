@@ -37,6 +37,8 @@ namespace Debug
 
 
 #define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
+
+//Version 1
 #define AB_LOG(LogCat, Verbosity, Format, ...) \
     if (GWorld && GWorld->IsGameWorld()) \
     { \
@@ -45,7 +47,7 @@ namespace Debug
     }
 
 
-// 새로운 매크로 이름
+// Version 2
 #define AA_LOG(LogCat, Verbosity, Format, ...) \
     do { \
         if (GWorld && GWorld->IsGameWorld()) \
@@ -53,3 +55,7 @@ namespace Debug
             UE_LOG(LogCat, Verbosity, Format, ##__VA_ARGS__); \
         } \
     } while(0)
+
+
+
+//#define AC_LOG(LogCat, Verbosity, Format, ...) UE_LOG(LogCat, Verbosity, TEXT("%s,   %s"), LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
