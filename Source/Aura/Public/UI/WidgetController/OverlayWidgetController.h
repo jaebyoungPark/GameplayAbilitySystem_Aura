@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "GameplayTagContainer.h"
+
+#include "DebugHelper.h"
 #include "OverlayWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
@@ -67,4 +69,17 @@ protected:
 	void ManaChanged(const FOnAttributeChangeData& Data) const;
 	void MaxManaChanged(const FOnAttributeChangeData& Data) const;
 
+	template<typename T>
+
+	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag); 
+
 };
+
+template<typename T>
+inline T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
+{
+	AB_LOG(LogTemp, Warning, TEXT("Tag's Name : %s"), *Tag.GetTagName().ToString());
+
+	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
+	
+}
