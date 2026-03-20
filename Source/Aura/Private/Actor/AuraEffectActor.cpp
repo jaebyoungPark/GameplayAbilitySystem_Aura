@@ -45,23 +45,8 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
 
-
-	//TStart
-	FGameplayEffectContext* EffectContext = EffectContextHandle.Get();
-
-	AB_LOG(LogTemp, Warning, TEXT("[EffectCauser] : %s, [Instigator] : %s"), *EffectContext->GetEffectCauser()->GetName(), *EffectContext->GetInstigator()->GetName());
-
 	FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, EffectContextHandle);
 	FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
-
-	//FGameplayEffectQuery Query;
-	//TArray<FActiveGameplayEffectHandle> Handles = TargetASC->GetActiveEffects(Query);
-
-	//int32 Count = Handles.Num();
-	//AB_LOG(LogTemp, Warning, TEXT("ASC Active Effects Count = %d"), Count);
-
-	//AB_LOG(LogTemp, Warning, TEXT("Handle = %s"), *ActiveEffectHandle.ToString());
-	//TEnd
 
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
