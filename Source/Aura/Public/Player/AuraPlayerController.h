@@ -41,6 +41,8 @@ private:
 	void Move(const FInputActionValue& Value);
 
 	void CursorTrace();
+
+	//강의에선 갑자기 컴파일에러 떠서 원시포인터 IEenemyInteface* 로 바꿈. 근데 난 에러가 안떠서 일단 남겨둠. 73강 12:55부분
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
 
