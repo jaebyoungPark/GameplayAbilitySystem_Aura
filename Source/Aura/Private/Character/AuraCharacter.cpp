@@ -12,6 +12,8 @@
 #include <Player/AuraPlayerController.h>
 #include <UI/HUD/AuraHUD.h>
 
+//강의엔 추가 안함. 개인 디버그용으로 넣음 
+#include "AbilitySystem/AuraAttributeSet.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -71,6 +73,12 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 
 	InitializeDefaultAttributes();
+
+	if (const UAuraAttributeSet* AS = Cast<UAuraAttributeSet>(AttributeSet))
+	{
+		AB_LOG(LogTemp, Warning, TEXT("Vigor : %.2f"), AS->GetVigor());
+	}
+
 
 }
 
