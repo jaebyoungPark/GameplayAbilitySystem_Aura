@@ -25,7 +25,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	GameplayTags.Attributes_Primary_Vigor = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Primary.Vigor"), FString("Increases helath")
+		FName("Attributes.Primary.Vigor"), FString("Increases health")
 	);
 
 	/**
@@ -40,7 +40,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	GameplayTags.Attributes_Secondary_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Secondary.BlockChance"), FString("Chance to cut incoming damage int half")
+		FName("Attributes.Secondary.BlockChance"), FString("Chance to cut incoming damage in half")
 	);
 
 	GameplayTags.Attributes_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(
