@@ -9,10 +9,28 @@
 #include "Net/UnrealNetwork.h"
 #include "DebugHelper.h"
 #include <AbilitySystemBlueprintLibrary.h>
+#include "AuraGameplayTags.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
- 
+	//FunctionPointer = GetIntelligenceAttribute;
+	//FGameplayAttribute Attribute = FunctionPointer();
+
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+	//FAttributeSignature StrengthDelegate;
+	//StrengthDelegate.BindStatic(GetStrengthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Strength, GetStrengthAttribute);
+
+	//FAttributeSignature IntelligenceDelegate;
+	//IntelligenceDelegate.BindStatic(GetIntelligenceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Resilience, GetResilienceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Vigor, GetVigorAttribute);
+
+	//RandomFunctionPointer = RandomFunction;
+
+	//float F = RandomFunctionPointer(0, 0.f, 0);
 
 
 }
