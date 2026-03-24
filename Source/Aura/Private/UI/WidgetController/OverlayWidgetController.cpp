@@ -17,6 +17,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	
 }
 
+
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
