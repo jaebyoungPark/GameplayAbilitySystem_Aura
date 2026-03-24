@@ -17,7 +17,6 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	AB_LOG(LogTemp, Warning, TEXT(""));
 
 
 	FGameplayTagContainer TagContainer;
