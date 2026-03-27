@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 
+#define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
+
+
 namespace Debug
 {
 	static void Print(const FString& Msg, const FColor& Color = FColor::MakeRandomColor(), int32 InKey = -1)
@@ -28,6 +31,11 @@ namespace Debug
 		}
 	}
 }
+
+#define DEBUG_PRINT(Msg) \
+    Debug::Print(FString::Printf(TEXT("[%s] %s"), LOG_CALLINFO, *FString(Msg)))
+
+
 //±‚¡∏
 //#define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
 //#define AA_LOG(LogCat, Verbosity, Format, ...) \
@@ -36,7 +44,7 @@ namespace Debug
 
 
 
-#define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
+
 
 //Version 1
 #define AB_LOG(LogCat, Verbosity, Format, ...) \
