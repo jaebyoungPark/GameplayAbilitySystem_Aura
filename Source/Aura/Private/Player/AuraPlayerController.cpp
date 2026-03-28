@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/AuraPlayerController.h"
@@ -24,7 +24,7 @@ AAuraPlayerController::AAuraPlayerController()
 
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 
-	//�׽�Ʈ��
+	//테스트용
 	PlayerCameraManagerClass = AMyPlayerCameraManager::StaticClass();
 }
 
@@ -98,7 +98,9 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
+				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
 
+				//DrawDebugSphere(GetWorld(), CachedDestination, 8.f, 8, FColor::Emerald, false, 5.f);
 				bAutoRunning = true;
 			}
 
@@ -107,8 +109,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		bTargeting = false;
 
 	}
-
-
+		
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
@@ -149,9 +150,6 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	}
 		
-
-
-	AB_LOG(LogTemp, Warning, TEXT(" GetWorld()->GetDeltaSeconds() 2 : %.4f"), GetWorld()->GetDeltaSeconds());
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
@@ -163,6 +161,7 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 	return AuraAbilitySystemComponent;
 
 }
+
 void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -178,7 +177,62 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
+	AutoRun();
 
+
+
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector PawnLocation = ControlledPawn->GetActorLocation();
+
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+
+		//// 🔴 1. Pawn 위치 (빨간 점)
+		//DrawDebugSphere(GetWorld(), PawnLocation, 10.f, 12, FColor::Red);
+
+		//// 🔵 2. 스플라인 위 가장 가까운 점 (검은 점)
+		//DrawDebugSphere(GetWorld(), LocationOnSpline, 12.f, 12, FColor::Black);
+		//AB_LOG(LogTemp, Warning, TEXT("[LocationOnSpline] : %s"), *LocationOnSpline.ToString());
+
+		// 🟢 3. 방향 벡터 (초록 화살표)
+		DrawDebugLine(
+			GetWorld(),
+			LocationOnSpline,
+			LocationOnSpline + Direction * 100.f,
+			FColor::Green,
+			false,
+			0.f,
+			0,
+			2.f
+		);
+
+		// 🟡 4. Pawn → Spline 연결선 (이해용)
+		DrawDebugLine(
+			GetWorld(),
+			PawnLocation,
+			LocationOnSpline,
+			FColor::Yellow,
+			false,
+			0.f,
+			0,
+			1.f
+		);
+
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+
+	}
 }
 
 void AAuraPlayerController::UpdateRotation(float DeltaTime)
