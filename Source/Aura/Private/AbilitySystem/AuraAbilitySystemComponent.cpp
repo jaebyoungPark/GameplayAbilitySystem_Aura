@@ -32,7 +32,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
-	DEBUG_PRINT(TEXT(" "));
+	//DEBUG_PRINT(TEXT(" "));
 
 	if (!InputTag.IsValid()) return;
 
