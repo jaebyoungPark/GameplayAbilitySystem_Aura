@@ -77,6 +77,7 @@ protected:
 template<typename T>
 inline T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
 {
+	//AB_LOG(LogTemp, Warning, TEXT("Tag's Name : %s"), *Tag.GetTagName().ToString());
 	AB_LOG(LogTemp, Warning, TEXT("Tag's Name : %s"), *Tag.GetTagName().ToString());
 
 	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));

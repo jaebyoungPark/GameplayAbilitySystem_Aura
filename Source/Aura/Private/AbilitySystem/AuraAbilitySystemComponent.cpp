@@ -9,11 +9,8 @@
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::EffectApplied);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::ClientEffectApplied);
 	
-	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, FString::Printf(TEXT("Tag : %s"), *GameplayTags.Attributes_Secondary_Armor.ToString()));
 }
 
 void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
@@ -25,6 +22,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupInputTag);
 			GiveAbility(AbilitySpec);
+
 		}
 
 
@@ -67,15 +65,36 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	}
 }
 
-void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
+	
+	const bool bIsServer = AbilityActorInfo->IsNetAuthority();
+	const bool bIsLocal = AbilityActorInfo->IsLocallyControlled();
 
+	AB_LOG(LogTemp, Warning, TEXT("Server: %d, Local: %d"), bIsServer, bIsLocal);
 
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
 
 	EffectAssetTags.Broadcast(TagContainer);
 
-
+	
 	
 }
+
+//void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+//{
+//
+//	const bool bIsServer = AbilityActorInfo->IsNetAuthority();
+//	const bool bIsLocal = AbilityActorInfo->IsLocallyControlled();
+//
+//	AB_LOG(LogTemp, Warning, TEXT("Server: %d, Local: %d"), bIsServer, bIsLocal);
+//
+//	FGameplayTagContainer TagContainer;
+//	EffectSpec.GetAllAssetTags(TagContainer);
+//
+//	EffectAssetTags.Broadcast(TagContainer);
+//
+//	TestVar += 100;
+//
+//}

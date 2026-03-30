@@ -12,6 +12,7 @@
 #include "AuraGameplayTags.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+#include "Interaction/EnemyInterface.h"
 
 #include "DebugHelper.h"
 
@@ -54,7 +55,7 @@ void AAuraPlayerController::BeginPlay()
 }
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	AB_LOG(LogTemp, Warning, TEXT("this : %s"), *this->GetName());
+
 
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -68,24 +69,17 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 		return;
 	}
 
 	if (bTargeting)
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);
-		}
-
+		if (GetASC())	GetASC()->AbilityInputTagReleased(InputTag);
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			
@@ -96,51 +90,36 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				for (const FVector& PointLoc : NavPath->PathPoints)
 				{
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
 				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
-
-				//DrawDebugSphere(GetWorld(), CachedDestination, 8.f, 8, FColor::Emerald, false, 5.f);
 				bAutoRunning = true;
 			}
-
 		}
 		FollowTime = 0.f;
 		bTargeting = false;
-
 	}
-		
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	AB_LOG(LogTemp, Warning, TEXT(" GetWorld()->GetDeltaSeconds() 1 : %.4f"), GetWorld()->GetDeltaSeconds());
+
 
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 		return;
 	}
 
 	if (bTargeting)
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}
 	else
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
-		{
-			CachedDestination = Hit.ImpactPoint;
-		}
+	
+		if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint;
 
 		if (APawn* ControlledPawn = GetPawn())
 		{
@@ -266,74 +245,57 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 void AAuraPlayerController::CursorTrace()
 {
-	//AB_LOG(LogTemp, Warning, TEXT("[ThisActor] : %s, [LastActor] : %s"),
-	//	*GetNameSafe(ThisActor.GetObject()),
-	//	*GetNameSafe(LastActor.GetObject())
-	//);
-
-	FHitResult CursorHit;
 
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
 	if ( !CursorHit.bBlockingHit )
 	{
-	
-
-		//AB_LOG(LogTemp, Warning, TEXT("BlockingHit is Invalid %d"), Test);
-
-
-
 		return;
 	}
 
 	LastActor = ThisActor;
-	ThisActor = CursorHit.GetActor();
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
 	
-	/**
-	* Line trace from cursor. There are several scenarios:
-	*  A. LastActor is null && ThisActor is null
-	*		 - Do nothing
-	*  B. Last Actor is null && ThisActor is valid
-	*		 - Highlight ThisActor
-	*  C. Last Actor is valid && ThisActor is null
-	*		- UnHighlight LastActor
-	*	D. Both Actor are valid, but LastActor != ThisActor
-	*		- UnHighlight LastActor, and Highlight ThisActor
-	*	E. Both Actors are valid, and are the same Actor
-	*		- Do nothing
-	*/
+	if (LastActor != ThisActor)
+	{
+		if (LastActor) LastActor->UnHighlightActor();
+		if (ThisActor) ThisActor->HighlightActor();
+	}
 
 
+
+
+	//Deprecated Code
 	if (LastActor == nullptr)
 	{
 		if (ThisActor != nullptr)
 		{
-			// Case B
+
 			ThisActor->HighlightActor();
 		}
 		else
 		{
-			// Case A - Both are null, do nothing 
+
 		}
 	}
-	else // LastActor is valid 
+	else 
 	{
 		if (ThisActor == nullptr)
 		{
-			// Case C 
+		
 			LastActor->UnHighlightActor();
 		}
-		else // both actors are valid
+		else 
 		{
 			if (LastActor != ThisActor)
 			{
-				// Case D
+			
 				LastActor->UnHighlightActor();
 				ThisActor->HighlightActor();
 			}
 			else
 			{
-				// Cas E - do nothing
+				
 			}
 
 		}
