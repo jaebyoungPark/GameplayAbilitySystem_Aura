@@ -77,7 +77,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	if (const UAuraAttributeSet* AS = Cast<UAuraAttributeSet>(AttributeSet))
 	{
-		AB_LOG(LogTemp, Warning, TEXT("Vigor : %.2f"), AS->GetVigor());
+
 	}
 
 
