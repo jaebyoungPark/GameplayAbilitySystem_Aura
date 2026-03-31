@@ -71,7 +71,7 @@ void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySys
 	const bool bIsServer = AbilityActorInfo->IsNetAuthority();
 	const bool bIsLocal = AbilityActorInfo->IsLocallyControlled();
 
-	//AB_LOG(LogTemp, Warning, TEXT("Server: %d, Local: %d"), bIsServer, bIsLocal);
+	AB_LOG(LogTemp, Warning, TEXT("Server: %d, Local: %d"), bIsServer, bIsLocal);
 
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);

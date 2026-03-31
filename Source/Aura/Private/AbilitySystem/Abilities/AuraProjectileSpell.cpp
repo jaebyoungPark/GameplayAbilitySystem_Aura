@@ -11,15 +11,26 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 
+	if (!AvatarActor)
+	{
+		AB_LOG(LogTemp, Warning, TEXT("AvatarActor is nullptr"));
+		return;
+	}
 
-
-
-
-
-
-
+	if (AvatarActor->HasAuthority())
+	{
+		AB_LOG(LogTemp, Warning, TEXT("ActivateAbility: Server"));
+	}
+	else
+	{
+		AB_LOG(LogTemp, Warning, TEXT("ActivateAbility: Client"));
+	}
 }
+
+
+
 void UAuraProjectileSpell::SpawnProjectile()
 {
 	
