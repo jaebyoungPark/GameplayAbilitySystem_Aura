@@ -17,6 +17,7 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 void UTargetDataUnderMouse::Activate()
 {
 
+	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
 
 	const bool bIsLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	if (bIsLocallyControlled)
@@ -25,20 +26,29 @@ void UTargetDataUnderMouse::Activate()
 	}
 	else
 	{
-		//TODO: We are on the server, so listen for target data.
-
+		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
+		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
+		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &ThisClass::OnTargetDataReplicatedCallback);
+		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationPredictionKey);
+		AB_LOG(LogTemp, Warning, TEXT("[bCalledDelegate] : %d"), bCalledDelegate);
+		if (!bCalledDelegate)
+		{
+			SetWaitingOnRemotePlayerData();
+		}
+			 
 	}
 
-
-
-
-
-	//AB_LOG_NET_INFO(ActorInfo);
+	
 }
 
 void UTargetDataUnderMouse::SendMouseCursorData()
 {
+	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
+
 	FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get());
+
+	UE_LOG(LogTemp, Warning, TEXT("Before RPC - ScopedPredictionKey Valid: %d"),
+		AbilitySystemComponent->ScopedPredictionKey.IsValidKey());
 
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorHit;
@@ -51,7 +61,8 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	DataHandle.Add(Data);
 
 	AbilitySystemComponent->ServerSetReplicatedTargetData(
-		GetAbilitySpecHandle(), GetActivationPredictionKey(),
+		GetAbilitySpecHandle(), 
+		GetActivationPredictionKey(),
 		DataHandle,
 		FGameplayTag(),
 		AbilitySystemComponent->ScopedPredictionKey
@@ -61,6 +72,17 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	{
 		ValidData.Broadcast(DataHandle);
 	}
+}
 
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
+{
+
+	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
+
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		ValidData.Broadcast(DataHandle);
+	}
 
 }

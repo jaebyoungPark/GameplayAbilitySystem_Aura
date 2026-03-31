@@ -37,6 +37,7 @@ namespace Debug
 
 
 
+
 /**
  * In World 
  */
@@ -50,32 +51,26 @@ do { \
     } \
 } while(0)
 
-// Version 2
-#define AA_LOG(LogCat, Verbosity, Format, ...) \
-    do { \
-        if (GWorld && GWorld->IsGameWorld()) \
-        { \
-            UE_LOG(LogCat, Verbosity, Format, ##__VA_ARGS__); \
-        } \
-    } while(0)
+
+
+//// Version 2
+//#define AA_LOG(LogCat, Verbosity, Format, ...) \
+//    do { \
+//        if (GWorld && GWorld->IsGameWorld()) \
+//        { \
+//            UE_LOG(LogCat, Verbosity, Format, ##__VA_ARGS__); \
+//        } \
+//    } while(0)
 
 
 #define AB_LOG_NET_INFO(ActorInfo) \
 do { \
-    if ((ActorInfo)->IsNetAuthority()) \
-        AB_LOG(LogTemp, Warning, TEXT("Server (Authority)")); \
-    else \
-        AB_LOG(LogTemp, Warning, TEXT("Client")); \
-    \
-    if ((ActorInfo)->IsLocallyControlled()) \
-        AB_LOG(LogTemp, Warning, TEXT("Locally Controlled")); \
-    else \
-        AB_LOG(LogTemp, Warning, TEXT("Not Locally Controlled")); \
+    const TCHAR* NetRole = (ActorInfo)->IsNetAuthority() ? TEXT("Server (Authority)") : TEXT("Client"); \
+    const TCHAR* LocalRole = (ActorInfo)->IsLocallyControlled() ? TEXT("Locally Controlled") : TEXT("Not Locally Controlled"); \
+    AB_LOG(LogTemp, Warning, TEXT("%s | %s"), NetRole, LocalRole); \
 } while(0)
 
 
-//기존
-//#define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
-//#define AA_LOG(LogCat, Verbosity, Format, ...) \
-//UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
-//LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
+////기존
+//#define AB_LOG(LogCat, Verbosity, Format, ...) \
+//    UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))

@@ -30,9 +30,6 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 void AAuraCharacterBase::BeginPlay()
 {
 	
-
-	AA_LOG(LogTemp, Warning, TEXT(""));
-
 	Super::BeginPlay();
 	
 }

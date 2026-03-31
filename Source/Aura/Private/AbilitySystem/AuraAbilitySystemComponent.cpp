@@ -52,7 +52,6 @@ void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 
 void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
 {
-	DEBUG_PRINT(TEXT(" "));
 
 	if (!InputTag.IsValid()) return;
 
