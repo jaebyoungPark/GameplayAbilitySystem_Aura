@@ -17,7 +17,7 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 void UTargetDataUnderMouse::Activate()
 {
 
-	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
+	//AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
 
 	const bool bIsLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	if (bIsLocallyControlled)
@@ -30,7 +30,7 @@ void UTargetDataUnderMouse::Activate()
 		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
 		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &ThisClass::OnTargetDataReplicatedCallback);
 		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationPredictionKey);
-		AB_LOG(LogTemp, Warning, TEXT("[bCalledDelegate] : %d"), bCalledDelegate);
+
 		if (!bCalledDelegate)
 		{
 			SetWaitingOnRemotePlayerData();
@@ -43,12 +43,12 @@ void UTargetDataUnderMouse::Activate()
 
 void UTargetDataUnderMouse::SendMouseCursorData()
 {
-	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
+	//AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
 
 	FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get());
 
-	UE_LOG(LogTemp, Warning, TEXT("Before RPC - ScopedPredictionKey Valid: %d"),
-		AbilitySystemComponent->ScopedPredictionKey.IsValidKey());
+	//UE_LOG(LogTemp, Warning, TEXT("Before RPC - ScopedPredictionKey Valid: %d"),
+	//	AbilitySystemComponent->ScopedPredictionKey.IsValidKey());
 
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorHit;
@@ -76,7 +76,6 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
 {
-
 	AB_LOG_NET_INFO(Ability->GetCurrentActorInfo());
 
 	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());

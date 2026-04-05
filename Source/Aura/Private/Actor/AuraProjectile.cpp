@@ -9,7 +9,7 @@ AAuraProjectile::AAuraProjectile()
 {
 
 	PrimaryActorTick.bCanEverTick = false;
-	//bReplicates = true;
+	bReplicates = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	SetRootComponent(Sphere);

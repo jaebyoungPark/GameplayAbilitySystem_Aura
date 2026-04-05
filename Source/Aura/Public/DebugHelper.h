@@ -74,3 +74,9 @@ do { \
 ////±‚¡∏
 //#define AB_LOG(LogCat, Verbosity, Format, ...) \
 //    UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
+
+
+
+
+//Debugging 
+void DrawAutoRunDebug(UWorld* World, const FVector& PawnLocation, const FVector& LocationOnSpline, const FVector& Direction);
