@@ -122,12 +122,10 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	if (!bTargeting && !bShiftKeyDown)
 	{
-		AB_LOG(LogTemp, Warning, TEXT("if (!bTargeting && !bShiftKeyDown) == true"));
+		//AB_LOG(LogTemp, Warning, TEXT("if (!bTargeting && !bShiftKeyDown) == true"));
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
-			AB_LOG(LogTemp, Warning, TEXT("if (FollowTime <= ShortPressThreshold && ControlledPawn) == true, FollowTime : %.2f"), FollowTime);
-
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();

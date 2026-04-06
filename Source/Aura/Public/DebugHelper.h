@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/PlayerState.h"
 
 #define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
 
@@ -53,21 +54,43 @@ do { \
 
 
 
-//// Version 2
-//#define AA_LOG(LogCat, Verbosity, Format, ...) \
-//    do { \
-//        if (GWorld && GWorld->IsGameWorld()) \
-//        { \
-//            UE_LOG(LogCat, Verbosity, Format, ##__VA_ARGS__); \
-//        } \
-//    } while(0)
-
 
 #define AB_LOG_NET_INFO(ActorInfo) \
 do { \
     const TCHAR* NetRole = (ActorInfo)->IsNetAuthority() ? TEXT("Server (Authority)") : TEXT("Client"); \
     const TCHAR* LocalRole = (ActorInfo)->IsLocallyControlled() ? TEXT("Locally Controlled") : TEXT("Not Locally Controlled"); \
     AB_LOG(LogTemp, Warning, TEXT("%s | %s"), NetRole, LocalRole); \
+} while(0)
+
+
+
+
+#define AB_LOG_NET_INFO_ACTOR(Actor) \
+do { \
+    const TCHAR* NetRole = (Actor)->HasAuthority() ? TEXT("Server") : TEXT("Client"); \
+    AActor* OwnerActor = (Actor)->GetOwner(); \
+    AController* OwnerController = Cast<AController>(OwnerActor); \
+    if (!OwnerController) \
+    { \
+        if (APawn* OwnerPawn = Cast<APawn>(OwnerActor)) \
+        { \
+            OwnerController = OwnerPawn->GetController(); \
+        } \
+    } \
+    int32 PlayerID = -1; \
+    if (OwnerController) \
+    { \
+        if (APlayerState* PS = OwnerController->GetPlayerState<APlayerState>()) \
+        { \
+            PlayerID = PS->GetPlayerId(); \
+        } \
+    } \
+    AB_LOG(LogTemp, Warning, TEXT("[%s][%s][PlayerID:%d] Owner:%s / Controller:%s"), \
+        NetRole, \
+        *GetNameSafe(Actor), \
+        PlayerID, \
+        *GetNameSafe(OwnerActor), \
+        *GetNameSafe(OwnerController)); \
 } while(0)
 
 

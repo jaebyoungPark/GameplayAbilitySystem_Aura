@@ -22,7 +22,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
-	AB_LOG_NET_INFO(GetCurrentActorInfo());
+	//AB_LOG_NET_INFO(GetCurrentActorInfo());
 
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
