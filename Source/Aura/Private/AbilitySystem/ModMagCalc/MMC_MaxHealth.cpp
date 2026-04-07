@@ -4,6 +4,7 @@
 #include "AbilitySystem/ModMagCalc/MMC_MaxHealth.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Interaction/CombatInterface.h"
+#include "DebugHelper.h"
 
 
 UMMC_MaxHealth::UMMC_MaxHealth()
@@ -32,6 +33,8 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+
+	AB_LOG(LogTemp, Warning, TEXT("[MaxHealth] : %.2f"), 80.f + 2.5f * Vigor + 10.f * PlayerLevel);
 
 	return 80.f + 2.5f * Vigor + 10.f * PlayerLevel;
 

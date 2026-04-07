@@ -139,7 +139,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+
+		AB_LOG(LogTemp, Warning, TEXT("[Changed Health on $s] : Health : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
