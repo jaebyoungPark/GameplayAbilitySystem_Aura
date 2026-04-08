@@ -66,18 +66,12 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 
 void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	
-	const bool bIsServer = AbilityActorInfo->IsNetAuthority();
-	const bool bIsLocal = AbilityActorInfo->IsLocallyControlled();
-
-	//AB_LOG(LogTemp, Warning, TEXT("Server: %d, Local: %d"), bIsServer, bIsLocal);
+	//AB_LOG_NET_INFO(AbilityActorInfo);
 
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
 
 	EffectAssetTags.Broadcast(TagContainer);
-
-	
 	
 }
 
