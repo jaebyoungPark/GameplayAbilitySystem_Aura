@@ -11,6 +11,8 @@
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -130,6 +132,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 }
 
+
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -143,7 +146,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 
-		AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth());
+		/*AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth());*/
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -176,6 +179,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 
+
+			ShowFloatingText(Props, LocalIncomingDamage);
 			
 		}
 
@@ -184,6 +189,23 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 
 }
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const 
+{
+	/*AB_LOG(LogTemp, Warning, TEXT("[SourceCharacter] : %s, [TargetCharacter] : %s"), *Props.SourceCharacter->GetActorNameOrLabel(), *Props.TargetCharacter->GetActorNameOrLabel());*/
+
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+
+	}
+}
+
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
