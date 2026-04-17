@@ -56,7 +56,18 @@ void AAuraEnemy::Die()
 }
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
-	AB_LOG(LogTemp, Warning, TEXT("New Count : %d"), NewCount);
+	//AB_LOG(LogTemp, Warning, TEXT("New Count : %d"), NewCount);
+	//if (AbilitySystemComponent)
+	//{
+	//	FGameplayTagContainer TagContainer;
+	//	AbilitySystemComponent->GetOwnedGameplayTags(TagContainer);
+
+	//	for (const FGameplayTag& Tag : TagContainer)
+	//	{
+	//		AB_LOG(LogTemp, Warning, TEXT("Owned Tag: %s"), *Tag.ToString());
+	//	}
+	//}
+
 
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
