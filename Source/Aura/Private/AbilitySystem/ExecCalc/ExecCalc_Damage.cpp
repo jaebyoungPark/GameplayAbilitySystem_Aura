@@ -10,6 +10,7 @@
 #include "Interaction/CombatInterface.h"
 
 #include "DebugHelper.h"
+#include <AuraAbilityTypes.h>
 
 struct AuraDamageStatics
 {
@@ -81,6 +82,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
 
 	const bool bBlocked = FMath::RandRange(1, 100) < TargetBlockChance;
+
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	FGameplayEffectContext* Context = EffectContextHandle.Get();
+	FAuraGameplayEffectContext* AuraContext = static_cast<FAuraGameplayEffectContext*>(Context);
+	AuraContext->SetIsBlockedHit(bBlocked);
+
 
 	// If Block, halve the damage.
 	Damage = bBlocked ? Damage / 2.f : Damage;
