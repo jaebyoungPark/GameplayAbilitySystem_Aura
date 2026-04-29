@@ -13,6 +13,8 @@
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -179,8 +181,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 
+			const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 
-			ShowFloatingText(Props, LocalIncomingDamage);
+			ShowFloatingText(Props, LocalIncomingDamage, bBlock, bCriticalHit);
 			
 		}
 
@@ -190,9 +194,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 }
 
-void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const 
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const 
 {
 	/*AB_LOG(LogTemp, Warning, TEXT("[SourceCharacter] : %s, [TargetCharacter] : %s"), *Props.SourceCharacter->GetActorNameOrLabel(), *Props.TargetCharacter->GetActorNameOrLabel());*/
+
+	AB_LOG(LogTemp, Warning, TEXT("[bBlockedHit] : %s, [bCriticalHit] : %s"), bBlockedHit ? TEXT("true") : TEXT("false"), bCriticalHit ? TEXT("true") : TEXT("false"));
 
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
