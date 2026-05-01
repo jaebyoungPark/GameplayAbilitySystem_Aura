@@ -73,11 +73,6 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
 		}
 
-		
-		
-
-
-		
 
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
