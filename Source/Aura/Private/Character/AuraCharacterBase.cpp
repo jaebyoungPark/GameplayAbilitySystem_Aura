@@ -8,6 +8,7 @@
 #include "Aura/Aura.h"
 
 #include "DebugHelper.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 
@@ -52,6 +53,10 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	//Added For Resolving the issue of Character Capsule and HealthBar are falling through the floor after death.
+	GetCharacterMovement()->DisableMovement();
+	//
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
