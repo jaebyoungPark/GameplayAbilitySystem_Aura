@@ -211,14 +211,14 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 {
 	/*AB_LOG(LogTemp, Warning, TEXT("[SourceCharacter] : %s, [TargetCharacter] : %s"), *Props.SourceCharacter->GetActorNameOrLabel(), *Props.TargetCharacter->GetActorNameOrLabel());*/
 
-	AB_LOG(LogTemp, Warning, TEXT("[bBlockedHit] : %s, [bCriticalHit] : %s"), bBlockedHit ? TEXT("true") : TEXT("false"), bCriticalHit ? TEXT("true") : TEXT("false"));
+	//AB_LOG(LogTemp, Warning, TEXT("[bBlockedHit] : %s, [bCriticalHit] : %s"), bBlockedHit ? TEXT("true") : TEXT("false"), bCriticalHit ? TEXT("true") : TEXT("false"));
 
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
 
-		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller))
 		{
-			AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
+			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 
