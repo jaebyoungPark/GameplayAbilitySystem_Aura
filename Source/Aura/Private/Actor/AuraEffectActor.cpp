@@ -35,6 +35,7 @@ void AAuraEffectActor::Tick(float Deltatime)
 }
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectsToEnemies) return;
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (TargetASC  == nullptr) return;
@@ -52,12 +53,20 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+	} 
+
+	if (!bIsInfinite)
+	{
+		Destroy();
 	}
+
 
 }
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectsToEnemies) return;
+
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
@@ -77,6 +86,7 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectsToEnemies) return;
 	//AB_LOG(LogTemp, Warning, TEXT("[InfiniteEffectRemovalPolicy] : %s"), *UEnum::GetValueAsString(InfiniteEffectRemovalPolicy));
 
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
@@ -112,7 +122,7 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 		}
 
 		for (FActiveGameplayEffectHandle& Handle : HandlesToRemove)
-		{
+ 		{
 			//AB_LOG(LogTemp, Warning, TEXT("Removed Handle Valid=%d  MapSize=%d"),
 			//	Handle.IsValid(),
 			//	ActiveEffectHandles.Num());
@@ -124,10 +134,11 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 
 	}
 
-}
+ }
 
 
 
 
 
 
+ 

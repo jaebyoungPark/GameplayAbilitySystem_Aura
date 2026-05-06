@@ -8,11 +8,13 @@ Scalable Float Magnitude = 1.0
 
 
 2. Stacking
-Stacking Type = aggregate by source
+Stacking Type = AggregateBySource, AggregateByTarget
 Stack Limit Count = 2
-Stack Duration Refresh Policy = refresh on successful application
-Stack Period Reset Policy = refresh on successful application
-Stack Expiration Policy = clear entire stack 
+Stack Duration Refresh Policy = RefreshOnSuccessfulApplication, NeverRefresh
+Stack Period Reset Policy =RefreshOnSuccessfulApplication, NeverReset
+Stack Expiration Policy = ClearEntireStack, RemoveSingleStackAndRefreshDuration, RefreshDuration
+
+
 
 3. Overflow
 Overflow Effects = 0
@@ -27,5 +29,6 @@ Scalable Float Magnitude =1.0
 5. Period
 Period = 0.1
 Execute Periodic Effect on Application = false
-Periodic Inhibition Policy = never reset
+Periodic Inhibition Policy = 
+NeverReset, ResetPeriod, ExecuteAndResetPeriod
 
