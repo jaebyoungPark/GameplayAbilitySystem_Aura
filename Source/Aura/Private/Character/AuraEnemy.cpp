@@ -44,9 +44,10 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 
 	if (!HasAuthority()) return;
 	AuraAIController = Cast<AAuraAIController>(NewController);
-	
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	AuraAIController->RunBehaviorTree(BehaviorTree);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HItReacting"), false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::Warrior);
 
 }
 
@@ -76,32 +77,15 @@ void AAuraEnemy::Die()
 	SetLifeSpan(LifeSpan);
 	Super::Die();
 }
-void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
-{
-	//AB_LOG(LogTemp, Warning, TEXT("New Count : %d"), NewCount);
-	//if (AbilitySystemComponent)
-	//{
-	//	FGameplayTagContainer TagContainer;
-	//	AbilitySystemComponent->GetOwnedGameplayTags(TagContainer);
-
-	//	for (const FGameplayTag& Tag : TagContainer)
-	//	{
-	//		AB_LOG(LogTemp, Warning, TEXT("Owned Tag: %s"), *Tag.ToString());
-	//	}
-	//}
 
 
-	bHitReacting = NewCount > 0;
-	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
-
-}
 void AAuraEnemy::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-	if(HasAuthority())
+	if (HasAuthority())
 	{
 		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
 	}
@@ -114,7 +98,7 @@ void AAuraEnemy::BeginPlay()
 	if (const UAuraAttributeSet* AuraAS = CastChecked<UAuraAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
-			[this](const FOnAttributeChangeData& Data) 
+			[this](const FOnAttributeChangeData& Data)
 			{
 				OnHealthChanged.Broadcast(Data.NewValue);
 			}
@@ -126,7 +110,7 @@ void AAuraEnemy::BeginPlay()
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
-		
+
 		AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this,
 			&AAuraEnemy::HitReactTagChanged
@@ -136,6 +120,16 @@ void AAuraEnemy::BeginPlay()
 		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
 	}
 
+
+}
+
+void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+
+
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 
 }
 
