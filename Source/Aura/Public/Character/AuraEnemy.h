@@ -56,6 +56,9 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
 
+	//MyTest
+	virtual void Tick(float DeltaTime) override;
+
 
 
 

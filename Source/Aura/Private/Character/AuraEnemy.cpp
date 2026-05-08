@@ -149,3 +149,13 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
+
+void AAuraEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	float Distance = AuraAIController->GetBlackboardComponent()->GetValueAsFloat(FName("DistanceToTarget"));
+	AB_LOG(LogTemp, Warning, TEXT("Distance to Target: %.2f"), Distance);
+	
+
+}
