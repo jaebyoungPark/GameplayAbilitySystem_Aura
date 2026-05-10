@@ -87,7 +87,7 @@ void AAuraEnemy::BeginPlay()
 	InitAbilityActorInfo();
 	if (HasAuthority())
 	{
-		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 
@@ -157,5 +157,14 @@ void AAuraEnemy::Tick(float DeltaTime)
 	float Distance = AuraAIController->GetBlackboardComponent()->GetValueAsFloat(FName("DistanceToTarget"));
 	AB_LOG(LogTemp, Warning, TEXT("Distance to Target: %.2f"), Distance);
 	
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			2,                 // Key (-1이면 계속 새 메시지)
+			2.0f,               // 화면 표시 시간
+			FColor::Green,      // 색상
+			FString::Printf(TEXT("Distance to Target: %.2f"), Distance)
+		);
+	}
 
 }
