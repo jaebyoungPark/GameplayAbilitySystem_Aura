@@ -220,6 +220,14 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 		{
 			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			return;
+			
+		}
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller))
+		{
+			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+
 		}
 
 	}

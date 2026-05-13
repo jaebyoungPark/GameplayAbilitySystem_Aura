@@ -27,8 +27,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 {
 	//AB_LOG_NET_INFO(GetCurrentActorInfo());
 
+	float Test = GetAbilityLevel();
+
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
+	
 	
 	/*ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());*/
 
