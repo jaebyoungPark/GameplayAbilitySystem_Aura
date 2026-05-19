@@ -85,6 +85,8 @@ int32 AAuraEnemy::GetPlayerLevel()
 void AAuraEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
+	if (AuraAIController)
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	Super::Die();
 }
 
@@ -180,5 +182,6 @@ void AAuraEnemy::Tick(float DeltaTime)
 			FString::Printf(TEXT("Distance to Target: %.2f"), Distance)
 		);
 	}
-
+	bool Dead = AuraAIController->GetBlackboardComponent()->GetValueAsBool(FName("Dead"));
+	AB_LOG(LogTemp, Warning, TEXT("[Dead] : %d"), Dead);
 }
