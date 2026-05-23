@@ -36,6 +36,10 @@ AAuraEnemy::AAuraEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("Ctor AttributeSet ptr: %p"),
+		AttributeSet.Get());
 }
 
 void AAuraEnemy::PossessedBy(AController* NewController)
@@ -94,6 +98,17 @@ void AAuraEnemy::Die()
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("AttributeSet ptr: %p"),
+		AttributeSet.Get());
+
+	if (AttributeSet)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("AttributeSet class: %s"),
+			*AttributeSet->GetClass()->GetName());
+	}
 
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
