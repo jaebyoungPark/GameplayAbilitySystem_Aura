@@ -28,6 +28,7 @@ AAuraEnemy::AAuraEnemy()
 	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
+
 	bUseControllerRotationRoll = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
