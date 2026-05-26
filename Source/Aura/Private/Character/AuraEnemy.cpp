@@ -46,7 +46,7 @@ AAuraEnemy::AAuraEnemy()
 void AAuraEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	if (!HasAuthority()) return;
 	AuraAIController = Cast<AAuraAIController>(NewController);
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
@@ -100,16 +100,16 @@ void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning,
-		TEXT("AttributeSet ptr: %p"),
-		AttributeSet.Get());
+	//UE_LOG(LogTemp, Warning,
+	//	TEXT("AttributeSet ptr: %p"),
+	//	AttributeSet.Get());
 
-	if (AttributeSet)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("AttributeSet class: %s"),
-			*AttributeSet->GetClass()->GetName());
-	}
+	//if (AttributeSet)
+	//{
+	//	UE_LOG(LogTemp, Warning,
+	//		TEXT("AttributeSet class: %s"),
+	//		*AttributeSet->GetClass()->GetName());
+	//}
 
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
@@ -187,7 +187,7 @@ void AAuraEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	float Distance = AuraAIController->GetBlackboardComponent()->GetValueAsFloat(FName("DistanceToTarget"));
-	AB_LOG(LogTemp, Warning, TEXT("Distance to Target: %.2f"), Distance);
+	//AB_LOG(LogTemp, Warning, TEXT("Distance to Target: %.2f"), Distance);
 	
 	if (GEngine)
 	{
@@ -199,5 +199,5 @@ void AAuraEnemy::Tick(float DeltaTime)
 		);
 	}
 	bool Dead = AuraAIController->GetBlackboardComponent()->GetValueAsBool(FName("Dead"));
-	AB_LOG(LogTemp, Warning, TEXT("[Dead] : %d"), Dead);
+	//AB_LOG(LogTemp, Warning, TEXT("[Dead] : %d"), Dead);
 }
