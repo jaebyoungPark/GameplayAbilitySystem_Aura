@@ -42,7 +42,7 @@ private:
 	float LifeSpan = 15.f;
 
 	bool bHit = false;
-
+	
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect;
