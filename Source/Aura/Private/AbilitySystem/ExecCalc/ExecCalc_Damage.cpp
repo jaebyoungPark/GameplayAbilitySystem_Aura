@@ -123,7 +123,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		
 		Damage += DamageTypeValue; 
 	}
-
+	
 	// Capture BlockChance on Target, and determine if there was a successful Block
 	// If Block, halve the damage.
 

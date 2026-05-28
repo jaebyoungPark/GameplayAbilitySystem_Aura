@@ -55,6 +55,10 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	PC->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
+	AB_LOG(LogTemp, Warning, TEXT("[CursorHit / Label] : %s, %s "), *CursorHit.GetActor()->GetName(), *CursorHit.GetActor()->GetActorLabel());
+
+
+
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
 	Data->HitResult = CursorHit;

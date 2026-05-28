@@ -129,16 +129,20 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 
 
+	/*AB_LOG(LogTemp, Warning, TEXT("[GetASC()] : %s"), GetASC() ? TEXT("True") : TEXT("False"));*/
 
 	if (GetASC())	GetASC()->AbilityInputTagReleased(InputTag);
 
 
 	if (!bTargeting && !bShiftKeyDown)
 	{
-		//AB_LOG(LogTemp, Warning, TEXT("if (!bTargeting && !bShiftKeyDown) == true"));
+		/*AB_LOG(LogTemp, Warning, TEXT("if (!bTargeting && !bShiftKeyDown) == true"));*/
+
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
+			/*AB_LOG(LogTemp, Warning, TEXT("FollowTime is Less Than ShortPressThreshold"));*/
+
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
@@ -189,6 +193,7 @@ void AAuraPlayerController::AutoRun()
 	if (!bAutoRunning) return;
 	if (APawn* ControlledPawn = GetPawn())
 	{
+		/*AB_LOG(LogTemp, Warning, TEXT("bAutoRunning is true"));*/
 		const FVector PawnLocation = ControlledPawn->GetActorLocation();
 
 		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
