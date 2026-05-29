@@ -21,7 +21,7 @@ UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
-
+	
 public:
 	
 	AAuraCharacterBase();
