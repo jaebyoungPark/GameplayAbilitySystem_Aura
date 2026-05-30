@@ -57,7 +57,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	AB_LOG(LogTemp, Warning, TEXT("[CursorHit / Label] : %s, %s "), *CursorHit.GetActor()->GetName(), *CursorHit.GetActor()->GetActorLabel());
 
-
+	
 
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
