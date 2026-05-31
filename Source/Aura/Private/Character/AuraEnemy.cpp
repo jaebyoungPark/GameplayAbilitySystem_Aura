@@ -121,7 +121,7 @@ void AAuraEnemy::BeginPlay()
 
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
-		AuraUserWidget->SetWidgetController(this);
+		AuraUserWidget->	SetWidgetController(this);
 	}
 	if (const UAuraAttributeSet* AuraAS = CastChecked<UAuraAttributeSet>(AttributeSet))
 	{
