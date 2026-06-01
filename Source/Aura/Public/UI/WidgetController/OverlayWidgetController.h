@@ -9,9 +9,10 @@
 #include "DebugHelper.h"
 #include "OverlayWidgetController.generated.h"
 
-struct FOnAttributeChangeData;
+
 class UAuraUserWidget;
 class UAbilityInfo;
+class UAuraAbilitySystemComponent;
 
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
@@ -68,6 +69,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySyststemComponent);
 
 
 

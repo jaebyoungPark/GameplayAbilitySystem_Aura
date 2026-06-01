@@ -190,3 +190,12 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 }
 
 
+//나만의 함수
+FGameplayTagContainer UAuraAbilitySystemLibrary::GetDynamicAbilityTagsFromAbility(const UGameplayAbility* Ability)
+{
+	const FGameplayAbilitySpec* Spec = Ability->GetCurrentAbilitySpec();
+
+	return Spec->DynamicAbilityTags;
+}
+
+

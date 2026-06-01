@@ -21,13 +21,21 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		if (const UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupInputTag);
+
+			////Test
+			//FGameplayTag TestTag = FGameplayTag::RequestGameplayTag(FName("Attributes.Secondary.Armor"));
+			//AbilitySpec.DynamicAbilityTags.AddTag(TestTag);
+			////
+			
+			AB_LOG(LogTemp, Warning, TEXT("[AuraAbility->StartupInputTag] : %s"), *AuraAbility->StartupInputTag.ToString());
+
+
 			GiveAbility(AbilitySpec);
 
 		}
-
-
-		
 	}
+	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast(this);
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)

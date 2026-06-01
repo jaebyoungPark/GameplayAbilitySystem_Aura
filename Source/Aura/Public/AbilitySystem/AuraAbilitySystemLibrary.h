@@ -52,5 +52,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
+
+
+
+	// 나만의 함수
+
+	UFUNCTION(BlueprintCallable)
+	static FGameplayTagContainer GetDynamicAbilityTagsFromAbility(const UGameplayAbility* Ability);
 };
  
