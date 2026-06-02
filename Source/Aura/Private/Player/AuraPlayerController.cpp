@@ -76,7 +76,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 }
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-
+	AB_LOG(LogTemp, Warning, TEXT("[InputTag] : %s"), *InputTag.ToString());
 	
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -89,7 +89,7 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-
+	AB_LOG(LogTemp, Warning, TEXT("[InputTag] : %s"), *InputTag.ToString());
 
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{

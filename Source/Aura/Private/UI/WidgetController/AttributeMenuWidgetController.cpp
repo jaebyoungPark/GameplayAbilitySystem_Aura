@@ -13,7 +13,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	check(AttributeInfo);
 	for (auto& Pair : AS->TagsToAttributes)
 	{
-		AB_LOG(LogTemp, Warning, TEXT("[Pair.Key] : %s, [Pair.Value] : %s"), *Pair.Key.ToString(), *Pair.Value().AttributeName);
+		/*AB_LOG(LogTemp, Warning, TEXT("[Pair.Key] : %s, [Pair.Value] : %s"), *Pair.Key.ToString(), *Pair.Value().AttributeName);*/
 
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 			[this, Pair](const FOnAttributeChangeData& Data)

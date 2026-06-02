@@ -3,8 +3,12 @@
 
 #include "UI/Widget/AuraUserWidget.h"
 
+#include "DebugHelper.h"
+
 void UAuraUserWidget::SetWidgetController(UObject* InWidgetController)
 {
+	
+
 	WidgetController = InWidgetController;
 	WidgetControllerSet();
 }
