@@ -55,7 +55,7 @@ void UWaitCooldownChange::CooldownTagChanged(const FGameplayTag InCooldownTag, i
 
 void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	/*AB_LOG(LogTemp, Warning, TEXT("this : %s, EffectSpec's Def : %s"), *GetFName().ToString(), *SpecApplied.Def->GetName());*/
+	AB_LOG(LogTemp, Warning, TEXT("this : %s, EffectSpec's Def : %s"), *GetFName().ToString(), *SpecApplied.Def->GetName());
 
 	FGameplayTagContainer AssetTags;
 	SpecApplied.GetAllAssetTags(AssetTags);
