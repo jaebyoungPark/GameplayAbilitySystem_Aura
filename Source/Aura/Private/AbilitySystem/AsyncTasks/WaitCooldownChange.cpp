@@ -55,7 +55,7 @@ void UWaitCooldownChange::CooldownTagChanged(const FGameplayTag InCooldownTag, i
 
 void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	AB_LOG(LogTemp, Warning, TEXT("this : %s, EffectSpec's Def : %s"), *GetFName().ToString(), *SpecApplied.Def->GetName());
+	/*AB_LOG(LogTemp, Warning, TEXT("this : %s, EffectSpec's Def : %s"), *GetFName().ToString(), *SpecApplied.Def->GetName());*/
 
 	FGameplayTagContainer AssetTags;
 	SpecApplied.GetAllAssetTags(AssetTags);
@@ -65,7 +65,7 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 	FGameplayTagContainer GrantedTags;
 	SpecApplied.GetAllGrantedTags(GrantedTags);
 
-	AB_LOG(LogTemp, Warning, TEXT("[GrantedTags] : %s"), *GrantedTags.ToString());
+	/*AB_LOG(LogTemp, Warning, TEXT("[GrantedTags] : %s"), *GrantedTags.ToString());*/
 
 	if (AssetTags.HasTagExact(CooldownTag) || GrantedTags.HasTagExact(CooldownTag))
 	{
@@ -74,7 +74,7 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 
 		for (auto TimeRemaining : TimesRemaining)
 		{
-			AB_LOG(LogTemp, Warning, TEXT("[TimeRemaining] : %.2f"), TimeRemaining);
+			/*AB_LOG(LogTemp, Warning, TEXT("[TimeRemaining] : %.2f"), TimeRemaining);*/
 		}
 
 		if (TimesRemaining.Num() > 0)
@@ -87,6 +87,7 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 					TimeRemaining = TimesRemaining[i];
 					
 				}
+
 
 			}
 
