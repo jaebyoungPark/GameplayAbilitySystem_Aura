@@ -23,6 +23,5 @@ int32 ULevelUpInfo::FindLevelUpForXP(int32 XP) const
 		}
 	}
 
-
 	return Level;
 }
