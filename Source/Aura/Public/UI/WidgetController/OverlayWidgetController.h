@@ -64,6 +64,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|XP")
+	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
+
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
@@ -76,6 +79,7 @@ protected:
 
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
 
+	void OnXPChanged(int32 NewXP) const;
 
 
 
