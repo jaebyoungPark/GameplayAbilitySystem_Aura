@@ -5,6 +5,8 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Interaction/CombatInterface.h"
 
+#include "DebugHelper.h"
+
 UMMC_MaxMana::UMMC_MaxMana()
 {
 	IntDef.AttributeToCapture = UAuraAttributeSet::GetIntelligenceAttribute();
@@ -16,6 +18,8 @@ UMMC_MaxMana::UMMC_MaxMana()
 
 float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
+	AB_LOG(LogTemp, Warning, TEXT("[Spec.GetContext().GetSourceObject()] : %s"), *Spec.GetContext().GetSourceObject()->GetName());
+
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
@@ -28,7 +32,13 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	Int = FMath::Max(Int, 0.f);
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+
+	int PlayerLevel = 1;
+	if (Spec.GetContext().GetSourceObject()->Implements<UCombatInterface>())
+	{
+		PlayerLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());
+	}
+
 
 	return 50.f + 2.5f * Int + 15.f * PlayerLevel;
 }
