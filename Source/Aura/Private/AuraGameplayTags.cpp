@@ -30,6 +30,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/**
 	 * Secondary Attributes
 	 */
+
 	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.Armor"), FString("Reduces damage taken, improves Block Chance")
 	);
@@ -69,6 +70,16 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"), FString("Maximum amount of Mana obtainable")
 	);
+
+	/**
+	 * Meta Attributes
+	 */
+
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"), FString("Incoming XP Meta Attribute")
+	);
+
+
 
 	/**
 	 * InputTags
