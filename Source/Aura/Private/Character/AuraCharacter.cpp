@@ -17,9 +17,6 @@
 
 AAuraCharacter::AAuraCharacter()
 {
-
-
-
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
@@ -45,6 +42,13 @@ void AAuraCharacter::OnRep_PlayerState()
 
 	//Init abiilty actor info for clients
 	InitAbilityActorInfo();
+}
+
+void AAuraCharacter::AddToXP_Implementation(int32 InXP)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->AddToXP(InXP);
 }
 
 int32 AAuraCharacter::GetPlayerLevel()
