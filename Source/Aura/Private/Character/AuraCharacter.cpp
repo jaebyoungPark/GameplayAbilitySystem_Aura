@@ -64,6 +64,8 @@ void AAuraCharacter::OnRep_PlayerState()
 
 void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 {
+	AB_LOG(LogTemp, Warning, TEXT(""));
+
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->AddToXP(InXP);
@@ -132,18 +134,18 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 
 void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
 {
-	//TODO : Add AttributePoints to PlayerState
-
-	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
+
+	AuraPlayerState->AddToAttributePoints(InAttributePoints);
 }
 
 void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 {
-	//TODO : Add SpellPoints to PlayerState
-
-	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
+
+	AuraPlayerState->AddToSpellPoints(InSpellPoints);
 }
 
 

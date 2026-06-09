@@ -46,6 +46,8 @@ void AAuraPlayerState::AddToXP(int32 InXP)
 void AAuraPlayerState::AddToLevel(int32 InLevel)
 {
 	Level += InLevel;
+
+	
 	OnLevelChangedDelegate.Broadcast(Level);
 }
 
