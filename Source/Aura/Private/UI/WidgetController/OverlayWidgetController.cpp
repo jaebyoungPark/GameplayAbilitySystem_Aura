@@ -141,7 +141,7 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
 
 	checkf(LevelUpInfo, TEXT("LevelUpInfo is null. Please assign a LevelUpInfo DataAsset to the PlayerState"));
 		
-	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
+	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);	
 	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();
 
 	if (Level <= MaxLevel && Level > 0)
