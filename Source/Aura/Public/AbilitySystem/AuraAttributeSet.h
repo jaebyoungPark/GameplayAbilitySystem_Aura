@@ -10,7 +10,7 @@
 struct FGameplayEffectModCallbackData;
 
 
- #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
+#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
  	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
  	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
  	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
@@ -33,7 +33,7 @@ struct FEffectProperties
 	AActor* SourceAvatarActor = nullptr;
 
 	UPROPERTY()
-	AController* SourceController = nullptr; 
+	AController* SourceController = nullptr;
 
 	UPROPERTY()
 	ACharacter* SourceCharacter = nullptr;
@@ -60,7 +60,7 @@ using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateU
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
@@ -73,6 +73,8 @@ public:
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
 
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 
@@ -81,7 +83,7 @@ public:
 	/*
 	* Primary Attributes
 	*/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength,  Category = "Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Attributes")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Strength);
 
@@ -98,7 +100,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Vigor);
 
 	/**
-	 * Resistance Attributes 
+	 * Resistance Attributes
 	 */
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Resistance Attributes")
@@ -175,7 +177,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 
 
-	/** 
+	/**
 	 *  Meta Attributes
 	 */
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
@@ -197,7 +199,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
-	
+
 	UFUNCTION()
 	void OnRep_Resilience(const FGameplayAttributeData& OldResilience) const;
 
@@ -253,4 +255,6 @@ private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCrticialHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
+	bool bTopOffHealth = false;
+	bool bTopOffMana = false;
 };

@@ -18,18 +18,22 @@ UMMC_MaxHealth::UMMC_MaxHealth()
 
 float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	// Gather tags from source and target
 	
+
+	// Gather tags from source and target
+
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
 	FAggregatorEvaluateParameters EvaluationParameters;
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
-	
+
 	float Vigor = 0.f;
 	GetCapturedAttributeMagnitude(VigorDef, Spec, EvaluationParameters, Vigor);
 	Vigor = FMath::Max<float>(Vigor, 0.f);
+
+
 
 	int32 PlayerLevel = 1;
 	if (Spec.GetContext().GetSourceObject()->Implements<UCombatInterface>())
@@ -37,9 +41,9 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 		PlayerLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());
 	}
 
-	
 
-	/*AB_LOG(LogTemp, Warning, TEXT("[MaxHealth] : %.2f"), 80.f + 2.5f * Vigor + 10.f * PlayerLevel);*/
+	AB_LOG(LogTemp, Warning, TEXT("[GetSourceObject] : %s | MaxHealth: %.2f | Vigor: %.2f | Level: %d"),
+		*Spec.GetContext().GetSourceObject()->GetName(), 80.f + 2.5f * Vigor + 10.f * PlayerLevel, Vigor, PlayerLevel);
 
 	return 80.f + 2.5f * Vigor + 10.f * PlayerLevel;
 

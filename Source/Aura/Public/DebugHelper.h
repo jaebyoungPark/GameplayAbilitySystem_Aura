@@ -39,18 +39,43 @@ namespace Debug
 
 
 
-/**
- * In World 
- */
-//Version 1
+///**
+// * In World 
+// */
+////Version 1
+//#define AB_LOG(LogCat, Verbosity, Format, ...) \
+//do { \
+//    if (GWorld && GWorld->IsGameWorld()) \
+//    { \
+//        UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
+//        LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__)); \
+//    } \
+//} while(0)
+
+#pragma once
+
+#define ENABLE_AB_LOG 1
+
+#if ENABLE_AB_LOG
+
 #define AB_LOG(LogCat, Verbosity, Format, ...) \
-do { \
+do \
+{ \
     if (GWorld && GWorld->IsGameWorld()) \
     { \
         UE_LOG(LogCat, Verbosity, TEXT("%-70s %s"), \
-        LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__)); \
+        LOG_CALLINFO, \
+        *FString::Printf(Format, ##__VA_ARGS__)); \
     } \
 } while(0)
+
+#else
+
+#define AB_LOG(LogCat, Verbosity, Format, ...)
+
+#endif
+
+
 
 
 

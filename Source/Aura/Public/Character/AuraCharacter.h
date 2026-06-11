@@ -61,5 +61,6 @@ private:
 	void MulticastLevelUpParticles() const;
 
 
-	
+	//Test
+	virtual void Tick(float DeltaTime) override;
 };

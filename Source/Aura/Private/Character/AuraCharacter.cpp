@@ -43,13 +43,13 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
-	
+
 	CharacterClass = ECharacterClass::Elementalist;
 }
 void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
+
 	//Init ability actor info for the server
 	InitAbilityActorInfo();
 	AddCharacterAbilities();
@@ -86,7 +86,7 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 		const FRotator ToCameraRotation = (CameraLocation - NiagaraSystemLocation).Rotation();
 		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
 
-		LevelUpNiagaraComponent->Activate(true);   
+		LevelUpNiagaraComponent->Activate(true);
 	}
 
 }
@@ -206,26 +206,22 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 
 
-////Test
-//void AAuraCharacter::Tick(float DeltaTime)
-//{
-//	//강의에선 tick 없음
-//	Super::Tick(DeltaTime);
-//
-//	// Tick에서 Draw DebugArrow 사용
-//	DrawDebugDirectionalArrow(
-//		GetWorld(),
-//		GetActorLocation(),
-//		GetActorLocation() + FVector(200.f, 0.f, 0.f), // 월드 X축
-//		50.f,
-//		FColor::Red,
-//		false,
-//		-1.f,
-//		0,
-//		3.f
-//	);
-//}
-////TestEnd
+//Test
+void AAuraCharacter::Tick(float DeltaTime)
+{
+	//강의에선 tick 없음
+	Super::Tick(DeltaTime);
+
+	float Health = Cast<UAuraAttributeSet>(GetAttributeSet())->GetHealth();
+	float MaxHealth = Cast<UAuraAttributeSet>(GetAttributeSet())->GetMaxHealth();
+	float Vigor = Cast<UAuraAttributeSet>(GetAttributeSet())->GetVigor();
+
+	AB_LOG(LogTemp, Warning, TEXT("[MaxHealth, Health] : %.2f, %.2f, [Vigor] : %.2f"), MaxHealth, Health, Vigor);
+
+
+}
+//TestEnd
+	
 
 
 //void AAuraCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)

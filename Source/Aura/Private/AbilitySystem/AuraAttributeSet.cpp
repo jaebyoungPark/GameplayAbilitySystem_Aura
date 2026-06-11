@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -47,7 +47,7 @@ UAuraAttributeSet::UAuraAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Fire, GetFireResistanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Lightning, GetLightningResistanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Arcane, GetArcaneResistanceAttribute);
-	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute)     ;
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
 
 }
 
@@ -87,39 +87,16 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, LightningResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, ArcaneResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
-	
-}
-
-void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
-{
-	Super::PreAttributeChange(Attribute, NewValue);
-
-
-
-
-	if (Attribute == GetHealthAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
-
-	}
-
-
-	if (Attribute == GetManaAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
-
-	}
 
 }
-
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
 {
 	// Source = causer of the effect, Target = target of the ffect (owner of this AS)
-	
+
 	Props.EffectContextHandle = Data.EffectSpec.GetContext();
 
 	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
-	
+
 
 	if (IsValid(Props.SourceASC) && Props.SourceASC->AbilityActorInfo.IsValid() && Props.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
 	{
@@ -149,22 +126,122 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 
 }
+void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+	//Test
+
+	AB_LOG(LogTemp, Warning, TEXT("[%s, Value] : %.2f"), *Attribute.GetName(), NewValue);
+
+	if (Attribute == GetVigorAttribute())
+	{
+
+	}
+
+	if (Attribute == GetMaxHealthAttribute())
+	{
+		//NewValue += 100;
+		//AB_LOG(LogTemp, Warning, TEXT("NewValue += 100"));
+	}
+
+	if (Attribute == GetIncomingXPAttribute())
+	{
+
+	}
+
+	//T End
+
+
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+
+	}
+
+
+	if (Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
+
+	}
+
+}
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	AB_LOG(LogTemp, Warning, TEXT("[%s, NewValue] : %.2f"), *Attribute.GetName(), NewValue);
+
+	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bTopOffHealth = false;
+	}
+	if (Attribute == GetMaxManaAttribute() && bTopOffMana)
+	{
+		SetMana(GetMaxMana());
+		bTopOffMana = false;
+	}
+
+}
+
 
 
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
+	AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s Start"), *Data.EvaluatedData.Attribute.GetName());
+
 	Super::PostGameplayEffectExecute(Data);
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
 
+	{
+		// Test
+		const FGameplayEffectContextHandle& ContextHandle =
+			Data.EffectSpec.GetContext();
+
+		AActor* TargetActor = nullptr;
+
+		if (Data.Target.AbilityActorInfo.IsValid())
+		{
+			TargetActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		}
+
+		const FString TargetName =
+			IsValid(TargetActor) ? TargetActor->GetName() : TEXT("Unknown");
+
+		if (Data.EvaluatedData.Attribute == GetVigorAttribute())
+		{
+			// 현재 변경 완료된 Vigor 값과, 그로 인해 실시간 재계산이 완료된 MaxHealth 값을 동시에 출력
+			AB_LOG(LogTemp, Warning,
+				TEXT("[%s] Vigor changed! Current Vigor: %.2f | Re-calculated MaxHealth: %.2f"),
+				*TargetName,
+				GetVigor(),
+				GetMaxHealth()); // 🔥 여기서 현재 갱신된 MaxHealth를 안전하게 읽어올 수 있습니다.
+		}
+
+		if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+		{
+			AB_LOG(LogTemp, Warning,
+				TEXT("[%s] MaxHealth : %.2f"),
+				*TargetName,
+				GetMaxHealth());
+		}
+
+
+		// Test End
+	}
+
+
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		
+
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 
-		/*AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth());*/
+		AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f, MaxHealth : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth(), GetMaxHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -189,7 +266,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				}
 				SendXPEvent(Props);
 
-				
+
 			}
 			else
 			{
@@ -202,48 +279,58 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 
 			ShowFloatingText(Props, LocalIncomingDamage, bBlock, bCriticalHit);
-			
+
 		}
 
 	}
-if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
-{
-	AB_LOG(LogTemp, Warning, TEXT(""));
-
-	const float LocalIncomingXP = GetIncomingXP();
-	SetIncomingXP(0.f);
-
-	// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
-	if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
-		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+		AB_LOG(LogTemp, Warning, TEXT("Attribute == GetIncomingXPAttribute()"));
 
-		const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
-		const int32 NumLevelUps = NewLevel - CurrentLevel;
-		if (NumLevelUps > 0)
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.f);
+
+		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
 		{
-			
-			const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
-			const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
-
-			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
-			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
-			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
-			
-			SetHealth(GetMaxHealth());
-			SetMana(GetMaxMana());
 
 
-			IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+			if (NumLevelUps > 0)
+			{
+
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+
+				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() before addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
+				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
+
+				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+
+				bTopOffHealth = true;
+				bTopOffMana = true;
+
+				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after SetHealth(GetMaxHealth())] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 		}
-		IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+		//}
+		AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s End"), *Data.EvaluatedData.Attribute.GetName());
 	}
 }
 
-}
 
-void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const 
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	/*AB_LOG(LogTemp, Warning, TEXT("[SourceCharacter] : %s, [TargetCharacter] : %s"), *Props.SourceCharacter->GetActorNameOrLabel(), *Props.TargetCharacter->GetActorNameOrLabel());*/
 
@@ -257,7 +344,7 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 			return;
-			
+
 		}
 		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller))
 		{
@@ -276,7 +363,7 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
-	
+
 		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 		FGameplayEventData Payload;
 		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;

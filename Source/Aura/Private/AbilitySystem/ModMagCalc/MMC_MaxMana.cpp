@@ -9,6 +9,7 @@
 
 UMMC_MaxMana::UMMC_MaxMana()
 {
+
 	IntDef.AttributeToCapture = UAuraAttributeSet::GetIntelligenceAttribute();
 	IntDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
 	IntDef.bSnapshot = false;
@@ -18,11 +19,11 @@ UMMC_MaxMana::UMMC_MaxMana()
 
 float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	
+
 
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
-	
+
 	FAggregatorEvaluateParameters EvaluationParameters;
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
@@ -39,6 +40,8 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 		PlayerLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());
 	}
 
+	AB_LOG(LogTemp, Warning, TEXT("[GetSourceObject] : %s | MaxHealth: %.2f | Vigor: %.2f | Level: %d"),
+		*Spec.GetContext().GetSourceObject()->GetName(), 50.f + 2.5f * Int + 15.f * PlayerLevel, Int, PlayerLevel);
 
 	return 50.f + 2.5f * Int + 15.f * PlayerLevel;
 }

@@ -17,7 +17,11 @@
 AAuraCharacterBase::AAuraCharacterBase()
 {
 
-	PrimaryActorTick.bCanEverTick = false;
+	/*PrimaryActorTick.bCanEverTick = false;*/
+
+	//For Test 
+	PrimaryActorTick.bCanEverTick = true;
+	//
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
