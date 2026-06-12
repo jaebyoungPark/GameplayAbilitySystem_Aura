@@ -132,7 +132,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 
 	//Test
 
-	AB_LOG(LogTemp, Warning, TEXT("[%s, Value] : %.2f"), *Attribute.GetName(), NewValue);
+	/*AB_LOG(LogTemp, Warning, TEXT("[%s, Value] : %.2f"), *Attribute.GetName(), NewValue);*/
 
 	if (Attribute == GetVigorAttribute())
 	{
@@ -142,7 +142,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetMaxHealthAttribute())
 	{
 		//NewValue += 100;
-		//AB_LOG(LogTemp, Warning, TEXT("NewValue += 100"));
+		///*AB_LOG(LogTemp, Warning, TEXT("NewValue += 100"));*/
 	}
 
 	if (Attribute == GetIncomingXPAttribute())
@@ -171,7 +171,7 @@ void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute,
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
-	AB_LOG(LogTemp, Warning, TEXT("[%s, NewValue] : %.2f"), *Attribute.GetName(), NewValue);
+	/*AB_LOG(LogTemp, Warning, TEXT("[%s, NewValue] : %.2f"), *Attribute.GetName(), NewValue);*/
 
 	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)
 	{
@@ -190,7 +190,7 @@ void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute,
 
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
-	AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s Start"), *Data.EvaluatedData.Attribute.GetName());
+	/*AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s Start"), *Data.EvaluatedData.Attribute.GetName());*/
 
 	Super::PostGameplayEffectExecute(Data);
 
@@ -241,7 +241,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 
-		AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f, MaxHealth : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth(), GetMaxHealth());
+		/*AB_LOG(LogTemp, Warning, TEXT("[Changed Health on %s] : Health : %.2f, MaxHealth : %.2f"), *Props.TargetAvatarActor->GetName(), GetHealth(), GetMaxHealth());*/
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -285,7 +285,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		AB_LOG(LogTemp, Warning, TEXT("Attribute == GetIncomingXPAttribute()"));
+		/*AB_LOG(LogTemp, Warning, TEXT("Attribute == GetIncomingXPAttribute()"));*/
 
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
@@ -306,49 +306,48 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
 				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
 
-				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() before addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+				/*AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() before addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());*/
 
 				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
 				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
 				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
 
-				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+				/*AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after addtoLevel] : %.2f, %.2f"), GetMaxHealth(), GetHealth());*/
 
 				bTopOffHealth = true;
 				bTopOffMana = true;
 
-				AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after SetHealth(GetMaxHealth())] : %.2f, %.2f"), GetMaxHealth(), GetHealth());
+				/*AB_LOG(LogTemp, Warning, TEXT("[GetMaxHealth, Health() after SetHealth(GetMaxHealth())] : %.2f, %.2f"), GetMaxHealth(), GetHealth());*/
 
 				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 			}
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 		}
-		//}
-		AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s End"), *Data.EvaluatedData.Attribute.GetName());
-	}
+	//}
+	/*AB_LOG(LogTemp, Warning, TEXT(" Attribute : %s End"), *Data.EvaluatedData.Attribute.GetName());*/
 }
+	}
 
 
 
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	/*AB_LOG(LogTemp, Warning, TEXT("[SourceCharacter] : %s, [TargetCharacter] : %s"), *Props.SourceCharacter->GetActorNameOrLabel(), *Props.TargetCharacter->GetActorNameOrLabel());*/
-
-	//AB_LOG(LogTemp, Warning, TEXT("[bBlockedHit] : %s, [bCriticalHit] : %s"), bBlockedHit ? TEXT("true") : TEXT("false"), bCriticalHit ? TEXT("true") : TEXT("false"));
+	///*AB_LOG(LogTemp, Warning, TEXT("[bBlockedHit] : %s, [bCriticalHit] : %s"), bBlockedHit ? TEXT("true") : TEXT("false"), bCriticalHit ? TEXT("true") : TEXT("false"));*/
 
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
 
 		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller))
 		{
-			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
+			///*AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());*/
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 			return;
 
 		}
 		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller))
 		{
-			//AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());
+			///*AB_LOG(LogTemp, Warning, TEXT("[PC] : %s"), *PC->GetName());*/
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 
 		}

@@ -40,8 +40,8 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 		PlayerLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());
 	}
 
-	AB_LOG(LogTemp, Warning, TEXT("[GetSourceObject] : %s | MaxHealth: %.2f | Vigor: %.2f | Level: %d"),
-		*Spec.GetContext().GetSourceObject()->GetName(), 50.f + 2.5f * Int + 15.f * PlayerLevel, Int, PlayerLevel);
+	//AB_LOG(LogTemp, Warning, TEXT("[GetSourceObject] : %s | MaxHealth: %.2f | Vigor: %.2f | Level: %d"),
+	//	*Spec.GetContext().GetSourceObject()->GetName(), 50.f + 2.5f * Int + 15.f * PlayerLevel, Int, PlayerLevel);
 
 	return 50.f + 2.5f * Int + 15.f * PlayerLevel;
 }
