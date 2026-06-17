@@ -130,6 +130,12 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 	check(AuraPlayerState);
 
 	AuraPlayerState->AddToLevel(InPlayerLevel);
+
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		AuraASC->UpdateAbilityStatuses(AuraPlayerState->GetPlayerLevel());
+	}
+
 }
 
 void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
@@ -221,7 +227,7 @@ void AAuraCharacter::Tick(float DeltaTime)
 
 }
 //TestEnd
-	
+
 
 
 //void AAuraCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)

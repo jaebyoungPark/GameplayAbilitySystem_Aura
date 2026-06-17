@@ -8,6 +8,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 
+#include "DebugHelper.h"
+
 void UAuraWidgetController::SetWidgetControllerParams(const FWidgetControllerParams& WCParams)
 {
 	PlayerController = WCParams.PlayerController;
@@ -27,6 +29,8 @@ void UAuraWidgetController::BindCallbacksToDependencies()
 
 void UAuraWidgetController::BroadcastAbilityInfo()
 {
+	AB_LOG(LogTemp, Warning, TEXT("Get Object Name : %s"), *GetFName().ToString());
+
 	if (!GetAuraASC()->bStartupAbilitiesGiven) return;
 
 	FForEachAbility BroadcastDelegate;

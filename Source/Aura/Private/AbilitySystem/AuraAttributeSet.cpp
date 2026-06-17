@@ -285,7 +285,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		/*AB_LOG(LogTemp, Warning, TEXT("Attribute == GetIncomingXPAttribute()"));*/
+		AB_LOG(LogTemp, Warning, TEXT("Attribute == GetIncomingXPAttribute()"));
 
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
