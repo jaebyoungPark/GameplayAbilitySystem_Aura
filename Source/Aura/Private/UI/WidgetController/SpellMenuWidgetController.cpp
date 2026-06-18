@@ -4,6 +4,7 @@
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "Player/AuraPlayerState.h"
 
 #include "DebugHelper.h"
 
@@ -12,12 +13,14 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 	AB_LOG(LogTemp, Warning, TEXT(""));
 
 	BroadcastAbilityInfo();
+	SpellPointsChanged.Broadcast(GetAuraPS()->GetSpellPoints());
+
 }
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
 	GetAuraASC()->AbilityStatusChanged.AddLambda(
-		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag) 
+		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
 		{
 			if (AbilityInfo)
 			{
@@ -25,7 +28,13 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 				Info.StatusTag = StatusTag;
 				AbilityInfoDelegate.Broadcast(Info);
 			}
+		}
+	);
 
+	GetAuraPS()->OnSpellPointsChangedDelegate.AddLambda(
+		[this](int32 SpellPoints)
+		{
+			SpellPointsChanged.Broadcast(SpellPoints);
 		}
 	);
 }

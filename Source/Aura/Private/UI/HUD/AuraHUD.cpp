@@ -58,7 +58,9 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
 	OverlayWidget->SetWidgetController(WidgetController);
-	WidgetController->BroadcastInitialValues();
+
+	/*286 초반에 내가 임의로 테스트를 위해주석처리함(강의에선 그대로 냅둠). 당장 없어도 되는 구문같아서. 뒤에 initializedefaultattributes() 를 호출하면서 자연스럽게 업데이트되기 때문에(?)*/
+	/*WidgetController->BroadcastInitialValues();*/
 
 	Widget->AddToViewport();
 

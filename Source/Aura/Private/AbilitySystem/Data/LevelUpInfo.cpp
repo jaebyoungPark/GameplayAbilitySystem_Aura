@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "DebugHelper.h"
 
 int32 ULevelUpInfo::FindLevelForXP(int32 XP) const
 {
@@ -11,6 +12,12 @@ int32 ULevelUpInfo::FindLevelForXP(int32 XP) const
 	{
 		// LevelUpInformation[1] = Level 1 Information
 		// LevelUpInformation[2] = Level 1 Information
+
+		//Test
+		int32 InforNum = LevelUpInformation.Num();
+		AB_LOG(LogTemp, Warning, TEXT("[InforNum] : %d"), InforNum);
+		//TEnd
+
 		if (LevelUpInformation.Num() - 1 <= Level) return Level;
 
 		if (XP >= LevelUpInformation[Level].LevelUpRequirement)
