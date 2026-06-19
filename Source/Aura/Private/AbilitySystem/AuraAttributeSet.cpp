@@ -198,42 +198,42 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	SetEffectProperties(Data, Props);
 
 
-	{
-		// Test
-		const FGameplayEffectContextHandle& ContextHandle =
-			Data.EffectSpec.GetContext();
+	//{
+	//	// Test
+	//	const FGameplayEffectContextHandle& ContextHandle =
+	//		Data.EffectSpec.GetContext();
 
-		AActor* TargetActor = nullptr;
+	//	AActor* TargetActor = nullptr;
 
-		if (Data.Target.AbilityActorInfo.IsValid())
-		{
-			TargetActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
-		}
+	//	if (Data.Target.AbilityActorInfo.IsValid())
+	//	{
+	//		TargetActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+	//	}
 
-		const FString TargetName =
-			IsValid(TargetActor) ? TargetActor->GetName() : TEXT("Unknown");
+	//	const FString TargetName =
+	//		IsValid(TargetActor) ? TargetActor->GetName() : TEXT("Unknown");
 
-		if (Data.EvaluatedData.Attribute == GetVigorAttribute())
-		{
-			// 현재 변경 완료된 Vigor 값과, 그로 인해 실시간 재계산이 완료된 MaxHealth 값을 동시에 출력
-			AB_LOG(LogTemp, Warning,
-				TEXT("[%s] Vigor changed! Current Vigor: %.2f | Re-calculated MaxHealth: %.2f"),
-				*TargetName,
-				GetVigor(),
-				GetMaxHealth()); // 🔥 여기서 현재 갱신된 MaxHealth를 안전하게 읽어올 수 있습니다.
-		}
+	//	if (Data.EvaluatedData.Attribute == GetVigorAttribute())
+	//	{
+	//		// 현재 변경 완료된 Vigor 값과, 그로 인해 실시간 재계산이 완료된 MaxHealth 값을 동시에 출력
+	//		AB_LOG(LogTemp, Warning,
+	//			TEXT("[%s] Vigor changed! Current Vigor: %.2f | Re-calculated MaxHealth: %.2f"),
+	//			*TargetName,
+	//			GetVigor(),
+	//			GetMaxHealth()); // 🔥 여기서 현재 갱신된 MaxHealth를 안전하게 읽어올 수 있습니다.
+	//	}
 
-		if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
-		{
-			AB_LOG(LogTemp, Warning,
-				TEXT("[%s] MaxHealth : %.2f"),
-				*TargetName,
-				GetMaxHealth());
-		}
+	//	if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+	//	{
+	//		AB_LOG(LogTemp, Warning,
+	//			TEXT("[%s] MaxHealth : %.2f"),
+	//			*TargetName,
+	//			GetMaxHealth());
+	//	}
 
 
-		// Test End
-	}
+	//	// Test End
+	//}
 
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())

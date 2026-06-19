@@ -64,7 +64,7 @@ void AAuraCharacter::OnRep_PlayerState()
 
 void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 {
-	AB_LOG(LogTemp, Warning, TEXT(""));
+	/*AB_LOG(LogTemp, Warning, TEXT(""));*/
 
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
@@ -222,7 +222,7 @@ void AAuraCharacter::Tick(float DeltaTime)
 	float MaxHealth = Cast<UAuraAttributeSet>(GetAttributeSet())->GetMaxHealth();
 	float Vigor = Cast<UAuraAttributeSet>(GetAttributeSet())->GetVigor();
 
-	AB_LOG(LogTemp, Warning, TEXT("[MaxHealth, Health] : %.2f, %.2f, [Vigor] : %.2f"), MaxHealth, Health, Vigor);
+	/*AB_LOG(LogTemp, Warning, TEXT("[MaxHealth, Health] : %.2f, %.2f, [Vigor] : %.2f"), MaxHealth, Health, Vigor);*/
 
 
 }
